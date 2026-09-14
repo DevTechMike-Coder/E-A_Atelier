@@ -16,18 +16,23 @@ export default function CartDrawer() {
     formatPrice,
     updateQuantity,
     removeFromCart,
+    clearCart,
     freeShippingProgress,
   } = useStore();
 
   const [giftNoteOpen, setGiftNoteOpen] = useState(false);
   const [giftNote, setGiftNote] = useState("");
   const [checkoutComplete, setCheckoutComplete] = useState(false);
+  const [batchCode, setBatchCode] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState<"courier" | "studio">("courier");
 
   if (!isCartOpen) return null;
 
   const handleCheckout = () => {
+    const code = `#EA-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    setBatchCode(code);
     setCheckoutComplete(true);
+    clearCart();
   };
 
   const handleReset = () => {
@@ -78,7 +83,7 @@ export default function CartDrawer() {
                 Merci. Your artisanal order has been entered into the active batch register. Our master knitter will begin weaving your loops with dedicated care.
               </p>
               <div className="bg-white p-4 border border-[rgba(138,111,90,0.2)] rounded text-xs space-y-1 text-left w-full">
-                <p className="font-semibold text-[#8a6f5a]">BATCH REGISTRATION: #EA-2026-914</p>
+                <p className="font-semibold text-[#8a6f5a]">BATCH REGISTRATION: {batchCode}</p>
                 <p className="text-[#4f453e]">Delivery: Carbon-Neutral Courier</p>
                 <p className="text-[#4f453e]">Estimated Dispatch: 10–14 Business Days</p>
               </div>

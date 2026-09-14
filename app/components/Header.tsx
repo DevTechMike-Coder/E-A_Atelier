@@ -14,6 +14,7 @@ export default function Header() {
     cartCount,
     setIsCartOpen,
     wishlistCount,
+    setIsWishlistOpen,
   } = useStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -204,10 +205,11 @@ export default function Header() {
               )}
             </div>
 
-            {/* Wishlist Link */}
-            <Link
-              href="/shop"
+            {/* Wishlist Trigger */}
+            <button
+              onClick={() => setIsWishlistOpen(true)}
               className="p-1.5 text-[#242321] hover:text-[#8a6f5a] transition-colors relative"
+              aria-label="Open Saved Pieces"
               title="Saved Pieces"
             >
               <Heart size={18} strokeWidth={1.8} className={wishlistCount > 0 ? "text-[#8a6f5a] fill-[#f1e0cc]" : ""} />
@@ -216,7 +218,7 @@ export default function Header() {
                   {wishlistCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             {/* Cart Drawer Trigger */}
             <button

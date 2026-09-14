@@ -61,6 +61,7 @@ interface StoreContextType {
   addToCart: (product: Product, colorway?: string, dimension?: string, quantity?: number) => void;
   removeFromCart: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, qty: number) => void;
+  clearCart: () => void;
   freeShippingProgress: {
     eligible: boolean;
     remainingUSD: number;
@@ -71,6 +72,8 @@ interface StoreContextType {
   toggleWishlist: (productId: string) => void;
   isWishlisted: (productId: string) => boolean;
   wishlistCount: number;
+  isWishlistOpen: boolean;
+  setIsWishlistOpen: (open: boolean) => void;
   isBespokeOpen: boolean;
   setIsBespokeOpen: (open: boolean) => void;
   bespokeProduct: string | null;
@@ -86,25 +89,56 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Default to NGN as per the user's explicit request for Nigerian customer
   const [currency, setCurrency] = useState<Currency>("NGN");
 
-  // Cart initialized with initial demo item (The Luna Tote) matching the lookbook & screenshot
-  const initialLuna = PRODUCTS[0];
-  const [cart, setCart] = useState<CartItem[]>([
-    {
-      id: "demo-luna-item",
-      productId: initialLuna.id,
-      product: initialLuna,
-      colorway: "Desert Ecru",
-      dimension: "Standard (38cm x 42cm)",
-      quantity: 1,
-      unitPriceUSD: 285,
-    }
-  ]);
-
+  // Cart starts clean and empty — no hard-coded items
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [wishlist, setWishlist] = useState<string[]>(["solstice-bucket-hat", "sienna-vest"]);
+
+  // Wishlist starts clean and empty — no hard-coded items
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+
   const [isBespokeOpen, setIsBespokeOpen] = useState(false);
   const [bespokeProduct, setBespokeProduct] = useState<string | null>(null);
   const [activeStitch, setActiveStitch] = useState<StitchAnatomy | null>(null);
+
+  // Hydrate from localStorage on client mount if available
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem("ea_atelier_cart");
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      }
+      const savedWishlist = localStorage.getItem("ea_atelier_wishlist");
+      if (savedWishlist) {
+        setWishlist(JSON.parse(savedWishlist));
+      }
+      const savedCurrency = localStorage.getItem("ea_atelier_currency");
+      if (savedCurrency && (savedCurrency in CURRENCIES)) {
+        setCurrency(savedCurrency as Currency);
+      }
+    } catch {
+      // LocalStorage unavailable in SSR or private mode
+    }
+  }, []);
+
+  // Save changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("ea_atelier_cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("ea_atelier_wishlist", JSON.stringify(wishlist));
+    } catch {}
+  }, [wishlist]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("ea_atelier_currency", currency);
+    } catch {}
+  }, [currency]);
 
   // Currency Formatter
   const formatPrice = (amountUSD: number): string => {
@@ -134,9 +168,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const percent = Math.min(100, Math.round((subtotalUSD / thresholdUSD) * 100));
 
   const freeShippingProgress = {
-    eligible: subtotalUSD >= thresholdUSD,
+    eligible: subtotalUSD >= thresholdUSD && subtotalUSD > 0,
     remainingUSD,
-    percent,
+    percent: subtotalUSD > 0 ? percent : 0,
     thresholdUSD,
   };
 
@@ -192,6 +226,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) =>
       prev.includes(productId)
@@ -229,11 +267,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         addToCart,
         removeFromCart,
         updateQuantity,
+        clearCart,
         freeShippingProgress,
         wishlist,
         toggleWishlist,
         isWishlisted,
         wishlistCount: wishlist.length,
+        isWishlistOpen,
+        setIsWishlistOpen,
         isBespokeOpen,
         setIsBespokeOpen,
         bespokeProduct,

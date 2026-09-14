@@ -5,6 +5,7 @@ import { StoreProvider } from "./context/StoreContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
+import WishlistDrawer from "./components/WishlistDrawer";
 import BespokeModal from "./components/BespokeModal";
 import StitchInspectModal from "./components/StitchInspectModal";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
           <main className="flex-1 w-full">{children}</main>
           <Footer />
           <CartDrawer />
+          <WishlistDrawer />
           <BespokeModal />
           <StitchInspectModal />
         </StoreProvider>
