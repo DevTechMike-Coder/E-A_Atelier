@@ -1,26 +1,177 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
+    --font-sans: var(--font-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Artisanal Studio Palette */
+    --surface: #fdf8f5;
+    --surface-dim: #ddd9d6;
+    --surface-bright: #fdf8f5;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #f7f3ef;
+    --surface-container: #f1ede9;
+    --surface-container-high: #ece7e4;
+    --surface-container-highest: #e6e2de;
+    --on-surface: #1c1b1a;
+    --on-surface-variant: #4f453e;
+    --inverse-surface: #31302e;
+    --inverse-on-surface: #f4f0ec;
+    --outline: #81756d;
+    --outline-variant: #d2c4ba;
+    --surface-tint: #725945;
+
+    --primary: #8a6f5a;
+    --primary-dark: #705743;
+    --on-primary: #ffffff;
+    --primary-container: #8a6f5a;
+    --on-primary-container: #fffbff;
+    --inverse-primary: #e1c0a8;
+
+    --secondary: #d8c8b5;
+    --secondary-dark: #685d4d;
+    --on-secondary: #ffffff;
+    --secondary-container: #f1e0cc;
+    --on-secondary-container: #6f6253;
+
+    --tertiary: #efe7da;
+    --tertiary-dark: #605b51;
+    --on-tertiary: #ffffff;
+    --tertiary-container: #797469;
+    --on-tertiary-container: #fffbff;
+
+    --neutral: #242321;
+    --canvas: #f8f4ed;
+    --accent-surface: #ffffff;
+
+    --border-hairline: rgba(138, 111, 90, 0.20);
+    --border-hairline-subtle: rgba(138, 111, 90, 0.12);
+    --border-hairline-dark: rgba(36, 35, 33, 0.15);
+
+    --shadow-ambient: 0 16px 40px -8px rgba(36, 35, 33, 0.08);
+    --shadow-subtle: 0 8px 24px -4px rgba(36, 35, 33, 0.04);
+  }
+
+  * {
+    border-color: var(--border-hairline);
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--neutral);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Typography Utility Classes */
+.font-display {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.font-sans-clean {
+  font-family: var(--font-sans);
+}
+
+.tracking-archival {
+  letter-spacing: 0.08em;
+}
+
+.tracking-archival-sm {
+  letter-spacing: 0.06em;
+}
+
+/* Hairline borders */
+.border-atelier {
+  border: 1px solid var(--border-hairline);
+}
+
+.border-atelier-subtle {
+  border: 1px solid var(--border-hairline-subtle);
+}
+
+.border-atelier-b {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.border-atelier-t {
+  border-top: 1px solid var(--border-hairline);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8f4ed;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8c8b5;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a6f5a;
+}
+
+/* Subtle image zooms & card interactions */
+.image-zoom-container {
+  overflow: hidden;
+}
+
+.image-zoom-container img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.image-zoom-container:hover img {
+  transform: scale(1.04);
+}
+
+/* Swatch Active Concentric Ring */
+.swatch-disc {
+  transition: all 0.2s ease;
+}
+
+.swatch-disc.active {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #8a6f5a;
+}
+
+/* Backdrop Blur Overlays */
+.glass-atelier {
+  background: rgba(248, 244, 237, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(36, 35, 33, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
