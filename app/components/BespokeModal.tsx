@@ -3,10 +3,14 @@
 import React, { useState } from "react";
 import { useStore } from "../context/StoreContext";
 import { X, CheckCircle2, Sparkles } from "lucide-react";
+import { submitBespokeCommission } from "../actions/bespoke";
 
 export default function BespokeModal() {
   const { isBespokeOpen, setIsBespokeOpen, bespokeProduct } = useStore();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [referenceCode, setReferenceCode] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [palette, setPalette] = useState("Unbleached Organic Flax");
@@ -14,13 +18,38 @@ export default function BespokeModal() {
 
   if (!isBespokeOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    const result = await submitBespokeCommission({
+      name,
+      email,
+      palette,
+      notes,
+      productName: bespokeProduct,
+    });
+
+    setSubmitting(false);
+
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+
+    setReferenceCode(result.referenceCode);
     setSubmitted(true);
   };
 
   const handleClose = () => {
     setSubmitted(false);
+    setError(null);
+    setReferenceCode(null);
+    setName("");
+    setEmail("");
+    setPalette("Unbleached Organic Flax");
+    setNotes("");
     setIsBespokeOpen(false);
   };
 
@@ -48,7 +77,7 @@ export default function BespokeModal() {
               Merci, {name}. Master Knitter Hélène Laurent will review your bespoke parameters and dispatch an archival fiber consultation within 48 hours.
             </p>
             <div className="p-3 bg-white border border-[rgba(138,111,90,0.2)] rounded text-xs text-[#705743] font-medium">
-              Reference: #COMMISSION-2026-BESPOKE
+              Reference: #{referenceCode}
             </div>
             <button
               onClick={handleClose}
@@ -137,6 +166,10 @@ export default function BespokeModal() {
               </div>
             </div>
 
+            {error && (
+              <p className="text-xs text-red-600 font-medium">{error}</p>
+            )}
+
             <div className="pt-2 flex gap-3">
               <button
                 type="button"
@@ -147,9 +180,10 @@ export default function BespokeModal() {
               </button>
               <button
                 type="submit"
-                className="flex-1 bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] py-2.5 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-md"
+                disabled={submitting}
+                className="flex-1 bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] py-2.5 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                SUBMIT INQUIRY
+                {submitting ? "SUBMITTING..." : "SUBMIT INQUIRY"}
               </button>
             </div>
           </form>
