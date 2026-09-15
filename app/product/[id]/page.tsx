@@ -23,10 +23,19 @@ export default async function ProductDetailPage({
 
   if (!dbProduct) notFound();
 
+  const reviews = dbProduct.reviews.map((r) => ({
+    id: r.id,
+    authorName: r.authorName,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt.toISOString(),
+  }));
+
   return (
     <ProductDetailClient
       product={mapProduct(dbProduct)}
       recommendations={others.map(mapProduct)}
+      reviews={reviews}
     />
   );
 }

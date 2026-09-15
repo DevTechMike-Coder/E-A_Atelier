@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useStore } from "../context/StoreContext";
 import { X, Plus, Minus, Trash2, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react";
 
 export default function CartDrawer() {
+  const router = useRouter();
   const {
     isCartOpen,
     setIsCartOpen,
@@ -29,10 +31,8 @@ export default function CartDrawer() {
   if (!isCartOpen) return null;
 
   const handleCheckout = () => {
-    const code = `#EA-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    setBatchCode(code);
-    setCheckoutComplete(true);
-    clearCart();
+    setIsCartOpen(false);
+    router.push("/checkout");
   };
 
   const handleReset = () => {

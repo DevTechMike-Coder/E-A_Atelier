@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Product, STITCHES } from "../../data/products";
 import { useStore } from "../../context/StoreContext";
 import ProductCard from "../../components/ProductCard";
+import { createProductReview } from "../../actions/reviews";
 import {
   Heart,
   Plus,
@@ -18,15 +19,29 @@ import {
   CheckCircle2,
   Clock,
   Layers,
-  Leaf
+  Leaf,
+  Star,
+  MessageSquareQuote,
+  X,
+  Loader2,
 } from "lucide-react";
+
+export interface ReviewItem {
+  id: string;
+  authorName: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+}
 
 export default function ProductDetailClient({
   product,
   recommendations,
+  reviews = [],
 }: {
   product: Product;
   recommendations: Product[];
+  reviews?: ReviewItem[];
 }) {
   const {
     formatPrice,
@@ -42,6 +57,54 @@ export default function ProductDetailClient({
   const [selectedDimension, setSelectedDimension] = useState(product.dimensions[0] || "Standard");
   const [quantity, setQuantity] = useState(1);
   const [openAccordion, setOpenAccordion] = useState<string>("materials");
+
+  // Collector Review Inscription State
+  const [reviewsList, setReviewsList] = useState<ReviewItem[]>(reviews);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewerName, setReviewerName] = useState("");
+  const [reviewerRating, setReviewerRating] = useState(5);
+  const [reviewerComment, setReviewerComment] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReviewError(null);
+    setIsSubmittingReview(true);
+
+    const res = await createProductReview({
+      productId: product.id,
+      authorName: reviewerName,
+      rating: reviewerRating,
+      comment: reviewerComment,
+    });
+
+    setIsSubmittingReview(false);
+
+    if (res.ok) {
+      setReviewsList((prev) => [
+        {
+          id: res.reviewId || Date.now().toString(),
+          authorName: reviewerName,
+          rating: reviewerRating,
+          comment: reviewerComment || null,
+          createdAt: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+      setReviewSuccess(true);
+      setTimeout(() => {
+        setIsReviewModalOpen(false);
+        setReviewSuccess(false);
+        setReviewerName("");
+        setReviewerComment("");
+        setReviewerRating(5);
+      }, 1500);
+    } else {
+      setReviewError(res.error || "Failed to preserve collector inscription.");
+    }
+  };
 
   const wishlisted = isWishlisted(product.id);
 
@@ -497,7 +560,230 @@ export default function ProductDetailClient({
         </div>
       </section>
 
-      {/* 4. YOU MAY ALSO CHERISH RECOMMENDATIONS */}
+      {/* 4. COLLECTOR INSCRIPTIONS & REVIEWS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-[rgba(138,111,90,0.18)] gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] tracking-archival uppercase text-[#8a6f5a] font-semibold">
+                COLLECTOR ARCHIVE
+              </span>
+              <span className="text-xs text-[#81756d]">•</span>
+              <div className="flex items-center text-[#8a6f5a]">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    size={12}
+                    className={
+                      s <= Math.round(product.rating || 5)
+                        ? "fill-[#8a6f5a] text-[#8a6f5a]"
+                        : "text-gray-300"
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+            <h2 className="font-editorial text-3xl sm:text-4xl text-[#1c1b1a]">
+              Collector Inscriptions ({reviewsList.length})
+            </h2>
+          </div>
+
+          <button
+            onClick={() => setIsReviewModalOpen(true)}
+            className="inline-flex items-center gap-2 bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] px-6 py-3 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-sm self-start sm:self-auto"
+          >
+            <MessageSquareQuote size={14} />
+            <span>WRITE AN INSCRIPTION</span>
+          </button>
+        </div>
+
+        {reviewsList.length === 0 ? (
+          <div className="bg-white border border-[rgba(138,111,90,0.2)] rounded-sm p-12 text-center space-y-4 max-w-xl mx-auto">
+            <div className="w-12 h-12 rounded-full bg-[#efe7da] text-[#705743] flex items-center justify-center mx-auto">
+              <Sparkles size={20} />
+            </div>
+            <h3 className="font-editorial text-2xl text-[#1c1b1a]">
+              First Inscription Awaiting
+            </h3>
+            <p className="text-xs text-[#4f453e] leading-relaxed">
+              No collector evaluations have been preserved for this reference yet. Share your reflections on its drape, tension, and living touch.
+            </p>
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              className="inline-block bg-[#8a6f5a] text-white hover:bg-[#705743] px-6 py-2.5 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors"
+            >
+              PEN THE FIRST INSCRIPTION
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviewsList.map((rev) => (
+              <div
+                key={rev.id}
+                className="bg-white border border-[rgba(138,111,90,0.2)] p-6 rounded-sm space-y-4 shadow-sm flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-[#8a6f5a]">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          size={12}
+                          className={
+                            s <= rev.rating
+                              ? "fill-[#8a6f5a] text-[#8a6f5a]"
+                              : "text-gray-300"
+                          }
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[10px] text-[#81756d] font-mono">
+                      {new Date(rev.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#4f453e] leading-relaxed italic">
+                    &ldquo;{rev.comment || "An exquisite, tactile heirloom that softens with each wear."}&rdquo;
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[rgba(138,111,90,0.15)] flex items-center justify-between text-[11px]">
+                  <span className="font-semibold text-[#1c1b1a]">{rev.authorName}</span>
+                  <span className="text-[10px] text-[#705743] tracking-archival uppercase font-medium">
+                    VERIFIED CUSTODIAN
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Review Modal */}
+      {isReviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[#fdf8f5] border border-[rgba(138,111,90,0.3)] rounded-sm max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 relative">
+            <button
+              onClick={() => setIsReviewModalOpen(false)}
+              className="absolute top-5 right-5 text-[#81756d] hover:text-[#1c1b1a]"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-semibold tracking-archival uppercase text-[#8a6f5a]">
+                ARCHIVAL INSCRIPTION
+              </span>
+              <h3 className="font-editorial text-2xl text-[#1c1b1a]">
+                Evaluate {product.name}
+              </h3>
+              <p className="text-xs text-[#4f453e]">
+                Your evaluation will be recorded permanently in the public collector register.
+              </p>
+            </div>
+
+            {reviewSuccess ? (
+              <div className="py-8 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#efe7da] text-[#705743] flex items-center justify-center mx-auto">
+                  <CheckCircle2 size={24} />
+                </div>
+                <h4 className="font-editorial text-xl text-[#1c1b1a]">
+                  Inscription Recorded
+                </h4>
+                <p className="text-xs text-[#4f453e]">
+                  Merci. Your provenance reflections have been added to the register.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleReviewSubmit} className="space-y-4">
+                {reviewError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-sm">
+                    {reviewError}
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold tracking-archival uppercase text-[#4f453e] block">
+                    Rating Evaluation *
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        type="button"
+                        key={star}
+                        onClick={() => setReviewerRating(star)}
+                        className="p-1 focus:outline-none"
+                      >
+                        <Star
+                          size={22}
+                          className={
+                            star <= reviewerRating
+                              ? "fill-[#8a6f5a] text-[#8a6f5a]"
+                              : "text-gray-300"
+                          }
+                        />
+                      </button>
+                    ))}
+                    <span className="text-xs font-mono text-[#81756d] ml-2">
+                      {reviewerRating} / 5 Stars
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold tracking-archival uppercase text-[#4f453e] block">
+                    Collector Name or Monogram *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Camille De Laroche"
+                    value={reviewerName}
+                    onChange={(e) => setReviewerName(e.target.value)}
+                    className="w-full bg-white border border-[rgba(138,111,90,0.25)] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold tracking-archival uppercase text-[#4f453e] block">
+                    Collector Reflections & Drape Notes
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Describe the tactile weight, natural flax handfeel, or living memory of this piece..."
+                    value={reviewerComment}
+                    onChange={(e) => setReviewerComment(e.target.value)}
+                    className="w-full bg-white border border-[rgba(138,111,90,0.25)] p-3 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsReviewModalOpen(false)}
+                    className="px-5 py-2.5 text-xs font-semibold tracking-archival uppercase text-[#81756d] hover:text-[#1c1b1a]"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingReview}
+                    className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] px-6 py-2.5 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors flex items-center gap-2"
+                  >
+                    {isSubmittingReview && <Loader2 size={14} className="animate-spin" />}
+                    <span>PRESERVE INSCRIPTION</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 5. YOU MAY ALSO CHERISH RECOMMENDATIONS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[rgba(138,111,90,0.18)] gap-4">
           <div>
