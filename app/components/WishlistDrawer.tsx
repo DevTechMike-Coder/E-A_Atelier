@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "../context/StoreContext";
-import { PRODUCTS } from "../data/products";
+import { getProductsByIds } from "../actions/products";
+import type { Product } from "../data/products";
 import { X, Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 
 export default function WishlistDrawer() {
@@ -19,9 +20,30 @@ export default function WishlistDrawer() {
     setIsCartOpen,
   } = useStore();
 
-  if (!isWishlistOpen) return null;
+  const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const wishlistedProducts = PRODUCTS.filter((p) => wishlist.includes(p.id));
+  // Refetch whenever the drawer opens or the wishlist ids change,
+  // so it always reflects current DB data instead of a stale snapshot.
+  useEffect(() => {
+    if (!isWishlistOpen || wishlist.length === 0) {
+      setWishlistedProducts([]);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getProductsByIds(wishlist).then((products) => {
+      if (!cancelled) {
+        setWishlistedProducts(products);
+        setLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isWishlistOpen, wishlist]);
+
+  if (!isWishlistOpen) return null;
 
   const handleMoveAllToTote = () => {
     wishlistedProducts.forEach((product) => {
@@ -64,7 +86,9 @@ export default function WishlistDrawer() {
 
           {/* Drawer Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {wishlistCount === 0 ? (
+            {loading ? (
+              <div className="py-20 text-center text-xs text-[#81756d]">Loading saved pieces...</div>
+            ) : wishlistCount === 0 ? (
               <div className="text-center py-20 space-y-4">
                 <div className="w-14 h-14 mx-auto rounded-full bg-[#f1e0cc] text-[#705743] flex items-center justify-center">
                   <Heart size={26} className="text-[#8a6f5a]" />

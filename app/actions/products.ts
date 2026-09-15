@@ -1,12 +1,15 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { mapProduct } from "@/lib/mapProduct";
-import HomeClient from "./HomeClient";
 
-export default async function HomePage() {
+export async function getProductsByIds(ids: string[]) {
+  if (ids.length === 0) return [];
+
   const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
     include: { images: true, colorways: true, reviews: true },
-    orderBy: { createdAt: "asc" },
   });
 
-  return <HomeClient products={products.map(mapProduct)} />;
+  return products.map(mapProduct);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Product, PRODUCTS, StitchAnatomy } from "../data/products";
+import { Product, StitchAnatomy } from "../data/products";
 
 export type Currency = "NGN" | "USD" | "EUR" | "GBP";
 
