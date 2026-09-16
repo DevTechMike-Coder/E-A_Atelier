@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Metadata } from "next";
 import { isAdminAuthenticated } from "@/app/actions/adminAuth";
 import { getPatronUserId } from "@/lib/session";
-import { logoutPatronUser } from "@/app/actions/auth";
 import AdminLoginClient from "./AdminLoginClient";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Owner Authentication — Atelier Terminal | E&A Atelier",
@@ -24,12 +24,6 @@ export default async function AdminLoginPage() {
   // ever becoming an admin.
   const patronId = await getPatronUserId();
   if (patronId) {
-    async function signOutAndRetry() {
-      "use server";
-      await logoutPatronUser();
-      redirect("/admin/login");
-    }
-
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 font-sans py-16">
         <div className="max-w-md w-full bg-white border border-[rgba(138,111,90,0.25)] rounded-sm p-8 sm:p-10 shadow-xl space-y-6 text-center">
@@ -45,18 +39,17 @@ export default async function AdminLoginPage() {
             </h1>
             <p className="text-xs text-[#4f453e] leading-relaxed">
               You&apos;re currently signed in to a storefront Patron account in this browser.
-              Patron accounts cannot access the atelier admin portal. Sign out of your patron
-              session to continue to the owner login.
+              Patron accounts cannot access the atelier admin portal. Head back to the
+              storefront to continue browsing the collection.
             </p>
           </div>
-          <form action={signOutAndRetry}>
-            <button
-              type="submit"
-              className="w-full bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] py-3 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-md"
-            >
-              SIGN OUT OF PATRON ACCOUNT
-            </button>
-          </form>
+          <Link
+            href="/"
+            className="w-full inline-flex items-center justify-center gap-2 bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] py-3 text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-md"
+          >
+            <ArrowLeft size={14} />
+            RETURN TO THE STOREFRONT
+          </Link>
         </div>
       </div>
     );
