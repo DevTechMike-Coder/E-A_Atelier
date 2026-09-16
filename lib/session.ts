@@ -88,6 +88,12 @@ export async function setAdminSession(userId: string) {
   const now = Math.floor(Date.now() / 1000);
   const token = encode({ sub: userId, role: "ADMIN", iat: now, exp: now + ADMIN_MAX_AGE });
   const store = await cookies();
+  // Enforce single-identity-per-browser: a browser that becomes an admin
+  // session should never simultaneously carry a leftover patron session
+  // (or vice versa, below). Without this, a stale admin session from
+  // earlier testing/use silently keeps granting /admin access after a
+  // completely unrelated patron sign-up happens in the same browser.
+  store.delete(PATRON_COOKIE);
   store.set(ADMIN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -113,6 +119,8 @@ export async function setPatronSession(userId: string) {
   const now = Math.floor(Date.now() / 1000);
   const token = encode({ sub: userId, role: "PATRON", iat: now, exp: now + PATRON_MAX_AGE });
   const store = await cookies();
+  // See note in setAdminSession above - keep the two sessions mutually exclusive.
+  store.delete(ADMIN_COOKIE);
   store.set(PATRON_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
