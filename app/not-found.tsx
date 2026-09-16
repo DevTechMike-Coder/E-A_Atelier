@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20 font-sans">
       <div className="max-w-xl w-full text-center space-y-8">
         {/* Subtle Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#efe7da] border border-[rgba(138,111,90,0.22)] rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#705743]">
+        <div className="inline-flex max-w-full flex-wrap items-center gap-2 px-3.5 py-1.5 bg-[#efe7da] border border-[rgba(138,111,90,0.22)] rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#705743]">
           <Compass size={13} className="text-[#8a6f5a]" />
           <span>REFERENCE NOT LOCATED • ERROR 404</span>
         </div>

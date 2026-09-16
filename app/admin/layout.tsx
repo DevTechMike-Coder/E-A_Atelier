@@ -1,6 +1,5 @@
 import React from "react";
-import StudioMasterSidebar from "./StudioMasterSidebar";
-import StudioMasterTopBar from "./StudioMasterTopBar";
+import AdminChrome from "./AdminChrome";
 import { getCurrentAdminUser } from "@/app/actions/adminAuth";
 
 export default async function AdminLayout({
@@ -21,16 +20,5 @@ export default async function AdminLayout({
       }
     : null;
 
-  return (
-    <div className="min-h-screen bg-[#faf6f0] text-[#1c1b1a] flex font-sans antialiased">
-      {/* Fixed Left Sidebar */}
-      <StudioMasterSidebar />
-
-      {/* Main Studio Viewport */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-        <StudioMasterTopBar user={topBarUser} />
-        <main className="flex-1 w-full">{children}</main>
-      </div>
-    </div>
-  );
+  return <AdminChrome user={topBarUser}>{children}</AdminChrome>;
 }

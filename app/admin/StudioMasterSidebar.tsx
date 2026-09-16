@@ -11,6 +11,7 @@ import {
   Sparkles,
   ExternalLink,
   Hourglass,
+  X,
   Users,
   CircleDollarSign,
   Settings,
@@ -33,7 +34,16 @@ interface NavSection {
   links: NavItem[];
 }
 
-export default function StudioMasterSidebar() {
+interface StudioMasterSidebarProps {
+  /** Mobile drawer state - ignored at lg+ where the rail is always docked. */
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export default function StudioMasterSidebar({
+  open = false,
+  onClose,
+}: StudioMasterSidebarProps) {
   const pathname = usePathname();
 
   // Hide sidebar on login page
@@ -73,8 +83,34 @@ export default function StudioMasterSidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-[#f5efe6] border-r border-[#e3d7c5] flex flex-col justify-between flex-shrink-0 min-h-screen select-none font-sans">
-      <div className="p-5 space-y-6">
+    <>
+      {/* Mobile scrim */}
+      <div
+        onClick={onClose}
+        aria-hidden={!open}
+        className={`fixed inset-0 z-40 bg-[#1c1b1a]/45 backdrop-blur-[2px] lg:hidden transition-opacity duration-200 ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
+      <aside
+        className={`w-64 max-w-[82vw] bg-[#f5efe6] border-r border-[#e3d7c5] flex flex-col justify-between flex-shrink-0 select-none font-sans
+          fixed inset-y-0 left-0 z-50 overflow-y-auto overscroll-contain shadow-2xl
+          transform transition-transform duration-200 ease-out
+          ${open ? "translate-x-0" : "-translate-x-full"}
+          lg:static lg:translate-x-0 lg:z-auto lg:shadow-none lg:min-h-screen lg:max-w-none`}
+      >
+      <div className="relative p-5 space-y-6">
+
+        {/* Mobile close */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="lg:hidden absolute top-4 right-3 p-1.5 text-[#8a6f5a] hover:text-[#1c1b1a] rounded-sm hover:bg-[#ede4d5] transition-colors"
+          aria-label="Close navigation"
+        >
+          <X size={18} />
+        </button>
         
         {/* Brand Crest */}
         <div className="space-y-3">
@@ -118,6 +154,7 @@ export default function StudioMasterSidebar() {
                       key={item.label}
                       href={item.href}
                       target={item.external ? "_blank" : undefined}
+                      onClick={onClose}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded-sm text-xs transition-colors ${
                         isActive
                           ? "bg-[#e5d5c0] text-[#1c1b1a] font-medium shadow-xs"
@@ -162,6 +199,7 @@ export default function StudioMasterSidebar() {
           <span className="font-semibold">82%</span>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

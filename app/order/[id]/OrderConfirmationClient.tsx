@@ -84,7 +84,7 @@ export default function OrderConfirmationClient({ order }: { order: OrderData })
         
         {/* Certificate Header Banner */}
         <div className="bg-[#242321] text-[#f8f4ed] p-8 sm:p-12 text-center space-y-4 relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#d8c8b5]">
+          <div className="inline-flex max-w-full flex-wrap items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#d8c8b5]">
             <Sparkles size={12} />
             <span>OFFICIAL ATELIER BATCH CERTIFICATE</span>
           </div>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { logoutAdmin } from "@/app/actions/adminAuth";
-import { Bell, ChevronDown, Plus, LogOut, Sparkles, UserCircle2 } from "lucide-react";
+import { Bell, ChevronDown, Plus, LogOut, Menu, UserCircle2 } from "lucide-react";
 
 interface AdminTopBarUser {
   name: string;
@@ -13,7 +13,13 @@ interface AdminTopBarUser {
   avatarUrl: string | null;
 }
 
-export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | null }) {
+export default function StudioMasterTopBar({
+  user,
+  onMenuClick,
+}: {
+  user: AdminTopBarUser | null;
+  onMenuClick?: () => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -26,10 +32,21 @@ export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | n
   };
 
   return (
-    <header className="h-16 bg-[#faf6f0] border-b border-[#e6dbc9] px-6 sm:px-8 flex items-center justify-between font-sans flex-shrink-0 select-none">
-      
+    <header className="h-16 bg-[#faf6f0] border-b border-[#e6dbc9] px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 font-sans flex-shrink-0 select-none">
+
       {/* Left Info Pills */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+
+        {/* Mobile nav trigger */}
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-1 text-[#705743] hover:text-[#1c1b1a] hover:bg-[#efe7da] rounded-sm transition-colors flex-shrink-0"
+          aria-label="Open studio navigation"
+        >
+          <Menu size={18} />
+        </button>
+
         <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#efe7da] border border-[#d8c8b4] rounded-sm text-xs text-[#3d2e24]">
           <span className="w-2 h-2 rounded-full bg-emerald-600" />
           <span className="font-medium">Spring Micro-Batch 04</span>
@@ -38,24 +55,24 @@ export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | n
           </span>
         </div>
 
-        <div className="text-xs text-[#705743] flex items-center gap-1.5 px-2.5 py-1 bg-white border border-[#e6dbc9] rounded-sm shadow-2xs">
+        <div className="text-xs text-[#705743] hidden md:flex items-center gap-1.5 whitespace-nowrap px-2.5 py-1 bg-white border border-[#e6dbc9] rounded-sm shadow-2xs">
           <span className="font-semibold text-[#1c1b1a]">16 Loom Hours</span>
           <span className="text-[#8a6f5a]">Remaining</span>
         </div>
       </div>
 
       {/* Right Controls & Profile */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-4 flex-shrink-0">
         
         {/* Currency Picker */}
-        <div className="flex items-center gap-1 px-2.5 py-1 bg-white border border-[#e6dbc9] rounded-sm text-xs text-[#3d2e24] cursor-pointer hover:bg-[#faf6f0]">
+        <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 bg-white border border-[#e6dbc9] rounded-sm text-xs text-[#3d2e24] cursor-pointer hover:bg-[#faf6f0]">
           <span className="font-medium">EUR €</span>
           <ChevronDown size={12} className="text-[#8a6f5a]" />
         </div>
 
         {/* Notification Bell */}
         <button
-          className="relative p-2 text-[#705743] hover:text-[#1c1b1a] bg-white border border-[#e6dbc9] rounded-sm hover:bg-[#faf6f0] transition-colors"
+          className="relative hidden sm:inline-flex p-2 text-[#705743] hover:text-[#1c1b1a] bg-white border border-[#e6dbc9] rounded-sm hover:bg-[#faf6f0] transition-colors"
           aria-label="Notifications"
         >
           <Bell size={15} />
@@ -65,7 +82,7 @@ export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | n
         {/* New Commission Button */}
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center gap-1.5 bg-[#5c4533] hover:bg-[#433123] text-white px-3.5 py-1.5 rounded-sm text-xs font-semibold tracking-archival uppercase transition-colors shadow-xs"
+          className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#5c4533] hover:bg-[#433123] text-white px-2.5 sm:px-3.5 py-1.5 rounded-sm text-xs font-semibold tracking-archival uppercase transition-colors shadow-xs"
         >
           <Plus size={14} />
           <span className="hidden sm:inline">NEW COMMISSION</span>
@@ -73,7 +90,7 @@ export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | n
         </Link>
 
         {/* Authenticated Admin Profile - reflects whoever is actually logged in */}
-        <div className="flex items-center gap-2.5 pl-2 border-l border-[#e6dbc9]">
+        <div className="flex items-center gap-2.5 pl-1.5 sm:pl-2 sm:border-l border-[#e6dbc9]">
           <div className="w-8 h-8 rounded-full overflow-hidden relative border border-[#d8c8b4] bg-[#efe7da] flex-shrink-0 flex items-center justify-center">
             {user?.avatarUrl ? (
               <Image src={user.avatarUrl} alt={user.name} fill className="object-cover" />

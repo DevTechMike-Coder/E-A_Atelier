@@ -57,7 +57,15 @@
     border-color: var(--border-hairline);
   }
 
+  html {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
   body {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
     background-color: var(--canvas);
     color: var(--neutral);
     font-family: var(--font-sans);

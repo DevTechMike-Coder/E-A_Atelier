@@ -67,13 +67,13 @@ export default function HomeClient({ products }: { products: Product[] }) {
           
           {/* Hero Left Column */}
           <div className="lg:col-span-6 space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#efe7da] border border-[rgba(138,111,90,0.2)] rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#705743]">
-              <Sparkles size={13} className="text-[#8a6f5a]" />
-              <span>EDITION N° 04 / SPRING RELEASE • PROVENCE 2026</span>
+            <div className="inline-flex max-w-full flex-wrap items-center gap-2 px-3 py-1 bg-[#efe7da] border border-[rgba(138,111,90,0.2)] rounded-full text-[9.5px] sm:text-[10.5px] font-semibold tracking-archival uppercase text-[#705743] leading-snug">
+              <Sparkles size={13} className="text-[#8a6f5a] flex-shrink-0" />
+              <span className="min-w-0 break-words">EDITION N° 04 / SPRING RELEASE • PROVENCE 2026</span>
             </div>
 
             <div className="space-y-4">
-              <h1 className="font-editorial text-5xl sm:text-6xl md:text-[68px] leading-[1.08] text-[#1c1b1a] tracking-tight font-normal">
+              <h1 className="font-editorial text-[2.6rem] sm:text-6xl md:text-[68px] leading-[1.08] text-[#1c1b1a] tracking-tight font-normal">
                 Handmade, <br />
                 <span className="italic font-normal text-[#705743]">With intention.</span>
               </h1>

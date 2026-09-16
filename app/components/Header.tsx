@@ -44,8 +44,8 @@ export default function Header() {
   return (
     <header className="w-full bg-[#fdf8f5] border-b border-[rgba(138,111,90,0.18)] sticky top-0 z-40">
       {/* Top Announcement Bar */}
-      <div className="w-full bg-[#242321] text-[#f8f4ed] text-[10.5px] uppercase tracking-[0.14em] py-2 px-4 text-center font-medium font-sans">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
+      <div className="w-full bg-[#242321] text-[#f8f4ed] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.1em] sm:tracking-[0.14em] py-2 px-3 sm:px-4 text-center font-medium font-sans">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           <span>
             Free complimentary gift packaging & carbon-neutral delivery on all
             artisanal orders — Slow-crafted in limited batches
@@ -54,7 +54,7 @@ export default function Header() {
       </div>
 
       {/* Spring Batch Slots Banner */}
-      <div className="w-full bg-[#efe7da] border-b border-[rgba(138,111,90,0.15)] text-[#504537] text-[11px] py-1.5 px-4 font-sans tracking-archival-sm text-center flex items-center justify-center gap-2">
+      <div className="w-full bg-[#efe7da] border-b border-[rgba(138,111,90,0.15)] text-[#504537] text-[10px] sm:text-[11px] py-1.5 px-3 sm:px-4 font-sans tracking-archival-sm text-center flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#8a6f5a] animate-pulse"></span>
         <span className="font-semibold text-[#1c1b1a]">
           SPRING BATCH ACTIVE
@@ -64,8 +64,8 @@ export default function Header() {
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-2 h-16 sm:h-20 min-w-0">
           {/* Mobile menu trigger */}
           <div className="flex items-center lg:hidden">
             <button
@@ -111,19 +111,19 @@ export default function Header() {
           </nav>
 
           {/* Center Brand Mark */}
-          <div className="flex flex-col items-center justify-center text-center">
-            <Link href="/" className="group inline-block">
-              <span className="font-editorial text-2xl md:text-[28px] tracking-[0.05em] text-[#1c1b1a] block font-normal group-hover:text-[#705743] transition-colors">
+          <div className="flex flex-col items-center justify-center text-center min-w-0">
+            <Link href="/" className="group inline-block min-w-0">
+              <span className="font-editorial text-lg sm:text-2xl md:text-[28px] tracking-[0.03em] sm:tracking-[0.05em] text-[#1c1b1a] block font-normal whitespace-nowrap group-hover:text-[#705743] transition-colors">
                 E&A ATELIER
               </span>
-              <span className="text-[9px] tracking-[0.24em] uppercase text-[#81756d] block -mt-1 font-sans">
+              <span className="hidden sm:block text-[9px] tracking-[0.24em] uppercase text-[#81756d] -mt-1 font-sans">
                 PROVENCE • SLOW CRAFT
               </span>
             </Link>
           </div>
 
           {/* Right Desktop Nav Links & Utility Controls */}
-          <div className="flex items-center space-x-5 lg:space-x-7">
+          <div className="flex items-center gap-1.5 sm:gap-4 lg:gap-7 flex-shrink-0">
             <nav className="hidden lg:flex items-center space-x-7 text-[12px] font-semibold tracking-[0.08em] uppercase text-[#4f453e]">
               {navLinks.slice(3).map((link) => {
                 const isActive = pathname === link.href;
@@ -151,7 +151,7 @@ export default function Header() {
             </nav>
 
             {/* Currency Selector (Includes Nigerian Naira) */}
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 hidden sm:block">
               <button
                 onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
                 className="flex items-center gap-1.5 whitespace-nowrap flex-nowrap text-[11px] font-semibold tracking-archival uppercase text-[#242321] px-2.5 py-1 rounded border border-[rgba(138,111,90,0.25)] hover:border-[#8a6f5a] bg-white transition-all shrink-0"
@@ -199,7 +199,7 @@ export default function Header() {
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white border border-[rgba(138,111,90,0.2)] p-2 rounded-sm shadow-xl z-50 animate-fade-in">
+                <div className="absolute right-0 mt-2 w-[min(16rem,calc(100vw-2rem))] bg-white border border-[rgba(138,111,90,0.2)] p-2 rounded-sm shadow-xl z-50 animate-fade-in">
                   <div className="flex items-center border border-[rgba(138,111,90,0.25)] px-2 py-1 bg-[#fdf8f5]">
                     <Search size={14} className="text-[#81756d] mr-1.5" />
                     <input

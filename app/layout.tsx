@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "./context/StoreContext";
@@ -25,6 +25,12 @@ export const metadata: Metadata = {
     "Slow luxury studio creating hand-looped crochet heirlooms, tactile artifacts, and artisanal wearable sculptures designed to age with deliberate grace in Provence.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,7 +41,7 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
     >
-      <body className="min-h-screen flex flex-col bg-[#fdf8f5] text-[#1c1b1a] antialiased">
+      <body className="min-h-screen w-full overflow-x-hidden flex flex-col bg-[#fdf8f5] text-[#1c1b1a] antialiased">
         <StoreProvider>
           <StorefrontChrome>{children}</StorefrontChrome>
         </StoreProvider>

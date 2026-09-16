@@ -23,7 +23,7 @@ export default function CraftPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           <div className="lg:col-span-6 space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#efe7da] border border-[rgba(138,111,90,0.2)] rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#705743]">
+            <div className="inline-flex max-w-full flex-wrap items-center gap-2 px-3 py-1 bg-[#efe7da] border border-[rgba(138,111,90,0.2)] rounded-full text-[10.5px] font-semibold tracking-archival uppercase text-[#705743]">
               <Sparkles size={13} className="text-[#8a6f5a]" />
               <span>THE ARCHITECTURE OF A SINGLE LOOP</span>
             </div>
