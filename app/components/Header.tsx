@@ -28,7 +28,7 @@ export default function Header() {
     { label: "WEARABLES", href: "/wearables" },
     { label: "HOME & LIVING", href: "/shop?category=home" },
     { label: "THE ATELIER & CRAFT", href: "/craft" },
-    { label: "CONTACT", href: "/craft#stockists" },
+    { label: "CONTACT", href: "/contact" },
   ];
 
   return (
@@ -36,14 +36,19 @@ export default function Header() {
       {/* Top Announcement Bar */}
       <div className="w-full bg-[#242321] text-[#f8f4ed] text-[10.5px] uppercase tracking-[0.14em] py-2 px-4 text-center font-medium font-sans">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
-          <span>Free complimentary gift packaging & carbon-neutral delivery on all artisanal orders — Slow-crafted in limited batches</span>
+          <span>
+            Free complimentary gift packaging & carbon-neutral delivery on all
+            artisanal orders — Slow-crafted in limited batches
+          </span>
         </div>
       </div>
 
       {/* Spring Batch Slots Banner */}
       <div className="w-full bg-[#efe7da] border-b border-[rgba(138,111,90,0.15)] text-[#504537] text-[11px] py-1.5 px-4 font-sans tracking-archival-sm text-center flex items-center justify-center gap-2">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#8a6f5a] animate-pulse"></span>
-        <span className="font-semibold text-[#1c1b1a]">SPRING BATCH ACTIVE</span>
+        <span className="font-semibold text-[#1c1b1a]">
+          SPRING BATCH ACTIVE
+        </span>
         <span className="text-[#81756d]">•</span>
         <span>11 Bespoke slots remaining for current moon cycle</span>
       </div>
@@ -51,7 +56,6 @@ export default function Header() {
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
           {/* Mobile menu trigger */}
           <div className="flex items-center lg:hidden">
             <button
@@ -81,7 +85,10 @@ export default function Header() {
                       coming soon
                     </span>
                   ) : (
-                    <span className="text-[8.5px] px-1.5 py-0.5 opacity-0 select-none pointer-events-none mt-0.5 leading-tight" aria-hidden="true">
+                    <span
+                      className="text-[8.5px] px-1.5 py-0.5 opacity-0 select-none pointer-events-none mt-0.5 leading-tight"
+                      aria-hidden="true"
+                    >
                       &nbsp;
                     </span>
                   )}
@@ -119,7 +126,10 @@ export default function Header() {
                     }`}
                   >
                     <span className="leading-tight">{link.label}</span>
-                    <span className="text-[8.5px] px-1.5 py-0.5 opacity-0 select-none pointer-events-none mt-0.5 leading-tight" aria-hidden="true">
+                    <span
+                      className="text-[8.5px] px-1.5 py-0.5 opacity-0 select-none pointer-events-none mt-0.5 leading-tight"
+                      aria-hidden="true"
+                    >
                       &nbsp;
                     </span>
                     {isActive && (
@@ -137,7 +147,9 @@ export default function Header() {
                 className="flex items-center gap-1.5 whitespace-nowrap flex-nowrap text-[11px] font-semibold tracking-archival uppercase text-[#242321] px-2.5 py-1 rounded border border-[rgba(138,111,90,0.25)] hover:border-[#8a6f5a] bg-white transition-all shrink-0"
                 title="Select Currency"
               >
-                <span className="whitespace-nowrap">{currency}&nbsp;{CURRENCIES[currency].symbol}</span>
+                <span className="whitespace-nowrap">
+                  {currency}&nbsp;{CURRENCIES[currency].symbol}
+                </span>
                 <ChevronDown size={13} className="text-[#81756d] shrink-0" />
               </button>
 
@@ -151,11 +163,15 @@ export default function Header() {
                         setCurrencyDropdownOpen(false);
                       }}
                       className={`w-full text-left px-3 py-1.5 text-[12px] flex items-center justify-between hover:bg-[#f7f3ef] transition-colors ${
-                        currency === c ? "text-[#8a6f5a] font-bold bg-[#fdf8f5]" : "text-[#242321]"
+                        currency === c
+                          ? "text-[#8a6f5a] font-bold bg-[#fdf8f5]"
+                          : "text-[#242321]"
                       }`}
                     >
                       <span>{c}</span>
-                      <span className="text-[#81756d] font-mono">{CURRENCIES[c].symbol}</span>
+                      <span className="text-[#81756d] font-mono">
+                        {CURRENCIES[c].symbol}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -185,7 +201,10 @@ export default function Header() {
                       autoFocus
                     />
                     {searchQuery && (
-                      <button onClick={() => setSearchQuery("")} className="text-xs text-[#81756d]">
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="text-xs text-[#81756d]"
+                      >
                         ×
                       </button>
                     )}
@@ -197,7 +216,8 @@ export default function Header() {
                         onClick={() => setSearchOpen(false)}
                         className="block p-1.5 hover:bg-[#f1ede9] text-[#705743] font-medium"
                       >
-                        Search for &ldquo;{searchQuery}&rdquo; in collection &rarr;
+                        Search for &ldquo;{searchQuery}&rdquo; in collection
+                        &rarr;
                       </Link>
                     </div>
                   )}
@@ -212,7 +232,13 @@ export default function Header() {
               aria-label="Open Saved Pieces"
               title="Saved Pieces"
             >
-              <Heart size={18} strokeWidth={1.8} className={wishlistCount > 0 ? "text-[#8a6f5a] fill-[#f1e0cc]" : ""} />
+              <Heart
+                size={18}
+                strokeWidth={1.8}
+                className={
+                  wishlistCount > 0 ? "text-[#8a6f5a] fill-[#f1e0cc]" : ""
+                }
+              />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1.5 w-4 h-4 rounded-full bg-[#8a6f5a] text-white text-[9px] font-bold flex items-center justify-center">
                   {wishlistCount}
@@ -266,7 +292,9 @@ export default function Header() {
           </div>
 
           <div className="pt-2 flex items-center justify-between">
-            <span className="text-xs text-[#81756d] uppercase tracking-archival">Select Currency:</span>
+            <span className="text-xs text-[#81756d] uppercase tracking-archival">
+              Select Currency:
+            </span>
             <div className="flex gap-2">
               {(Object.keys(CURRENCIES) as Currency[]).map((c) => (
                 <button
