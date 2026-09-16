@@ -1,0 +1,39 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Header from "./Header";
+import Footer from "./Footer";
+import CartDrawer from "./CartDrawer";
+import WishlistDrawer from "./WishlistDrawer";
+import BespokeModal from "./BespokeModal";
+import StitchInspectModal from "./StitchInspectModal";
+
+/**
+ * Root layout wraps every route. Admin routes render their own full-screen
+ * chrome (StudioMasterSidebar + topbar) inside app/admin/layout.tsx, so the
+ * storefront Header/Footer/drawers must not render there too.
+ */
+export default function StorefrontChrome({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
+
+  if (isAdmin) {
+    return <>{children}</>;
+  }
+
+  return (
+    <>
+      <Header />
+      <main className="flex-1 w-full">{children}</main>
+      <Footer />
+      <CartDrawer />
+      <WishlistDrawer />
+      <BespokeModal />
+      <StitchInspectModal />
+    </>
+  );
+}

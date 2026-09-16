@@ -1,13 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStore, Currency, CURRENCIES } from "../context/StoreContext";
 import { Search, Heart, ShoppingBag, Menu, X, ChevronDown } from "lucide-react";
+import PatronSanctuaryDrawer from "./PatronSanctuaryDrawer";
 
 export default function Header() {
   const pathname = usePathname();
+
+  // Strictly prevent Header from rendering on any admin route
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   const {
     currency,
     setCurrency,
@@ -21,6 +29,7 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const [patronSanctuaryOpen, setPatronSanctuaryOpen] = useState(false);
 
   const navLinks = [
     { label: "COLLECTION", href: "/shop" },

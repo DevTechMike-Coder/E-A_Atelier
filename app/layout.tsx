@@ -2,12 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "./context/StoreContext";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import CartDrawer from "./components/CartDrawer";
-import WishlistDrawer from "./components/WishlistDrawer";
-import BespokeModal from "./components/BespokeModal";
-import StitchInspectModal from "./components/StitchInspectModal";
+import StorefrontChrome from "./components/StorefrontChrome";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -42,13 +37,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-[#fdf8f5] text-[#1c1b1a] antialiased">
         <StoreProvider>
-          <Header />
-          <main className="flex-1 w-full">{children}</main>
-          <Footer />
-          <CartDrawer />
-          <WishlistDrawer />
-          <BespokeModal />
-          <StitchInspectModal />
+          <StorefrontChrome>{children}</StorefrontChrome>
         </StoreProvider>
       </body>
     </html>
