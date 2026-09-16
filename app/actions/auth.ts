@@ -30,9 +30,11 @@ export interface AuthResult {
  * Core authentication logic with strict role isolation:
  * - An admin email CANNOT be used to open or log in to a storefront patron account.
  * - A patron email CANNOT be used to log in to the admin studio portal.
- * - A brand-new Google account can self-provision as ADMIN on first sign-in
- *   through the admin portal; once it exists as one role it is permanently
- *   locked out of the other role (enforced by the two checks above).
+ * - Only ONE admin account may ever exist. A brand-new Google account can
+ *   self-provision as ADMIN only if no admin has been registered yet;
+ *   after that, every other email is rejected outright, regardless of role
+ *   isolation. Once an email is ADMIN it is permanently locked out of ever
+ *   holding a PATRON account (and vice versa).
  *
  * This should only ever be called from trusted server-side code (the Google
  * OAuth callback route) that has independently verified the email/name/
@@ -85,6 +87,20 @@ export async function authenticateWithGoogle({
 
   // If user doesn't exist, create a new record with the target role
   if (!user) {
+    // Enforce a single admin account across the whole app. Once any ADMIN
+    // exists, no other email - however it authenticates - can become a
+    // second admin.
+    if (targetRole === "ADMIN") {
+      const adminCount = await prisma.user.count({ where: { role: "ADMIN" } });
+      if (adminCount > 0) {
+        return {
+          ok: false,
+          error:
+            "An admin account has already been registered for this atelier. Only one admin account is permitted.",
+        };
+      }
+    }
+
     const memberNumber =
       targetRole === "ADMIN" ? "ATELIER-CUSTODIAN" : `PATRON-${crypto.randomInt(100, 1000)}`;
 

@@ -54,6 +54,18 @@ export async function verifyAdminPasskey(passkey: string) {
   let owner = await prisma.user.findUnique({ where: { email: normalizedOwnerEmail } });
 
   if (!owner) {
+    // Same single-admin constraint as the Google admin flow (app/actions/auth.ts):
+    // the passkey must not be usable to mint a second admin account once one
+    // already exists under a different email.
+    const adminCount = await prisma.user.count({ where: { role: "ADMIN" } });
+    if (adminCount > 0) {
+      return {
+        ok: false,
+        error:
+          "An admin account has already been registered for this atelier under a different email. Only one admin account is permitted.",
+      };
+    }
+
     owner = await prisma.user.create({
       data: {
         email: normalizedOwnerEmail,
