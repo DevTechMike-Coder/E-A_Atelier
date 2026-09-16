@@ -13,15 +13,6 @@ import {
 const DEFAULT_PATRON_AVATAR =
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop";
 
-// Emails allowed to self-provision an ADMIN account on first Google sign-in.
-// Comma-separated in the environment, e.g. ATELIER_ADMIN_EMAILS="owner@example.com,co-founder@example.com"
-// Without this, no *new* admin accounts can be created via Google sign-in -
-// only emails already marked ADMIN in the database can log in that way.
-const ADMIN_ALLOWLIST = (process.env.ATELIER_ADMIN_EMAILS || "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
-
 export interface AuthResult {
   ok: boolean;
   error?: string;
@@ -39,9 +30,9 @@ export interface AuthResult {
  * Core authentication logic with strict role isolation:
  * - An admin email CANNOT be used to open or log in to a storefront patron account.
  * - A patron email CANNOT be used to log in to the admin studio portal.
- * - A Google account that isn't already an admin and isn't on the admin
- *   allowlist CANNOT self-provision admin access, closing off the previous
- *   "anyone who types an email in the modal becomes an admin" hole.
+ * - A brand-new Google account can self-provision as ADMIN on first sign-in
+ *   through the admin portal; once it exists as one role it is permanently
+ *   locked out of the other role (enforced by the two checks above).
  *
  * This should only ever be called from trusted server-side code (the Google
  * OAuth callback route) that has independently verified the email/name/
@@ -87,16 +78,6 @@ export async function authenticateWithGoogle({
       ok: false,
       error:
         "This Google email is registered as a storefront Patron account and does not have administrative privileges for the Atelier Studio.",
-    };
-  }
-
-  // Block self-service privilege escalation: a brand-new Google account can
-  // only land as ADMIN if it's been explicitly allowlisted.
-  if (!existingUser && targetRole === "ADMIN" && !ADMIN_ALLOWLIST.includes(normalizedEmail)) {
-    return {
-      ok: false,
-      error:
-        "This Google account is not authorized for atelier admin access. Ask the atelier owner to add it to ATELIER_ADMIN_EMAILS.",
     };
   }
 
