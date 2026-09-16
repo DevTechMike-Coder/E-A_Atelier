@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product, StitchAnatomy } from "../data/products";
+import { getCurrentPatronUser, logoutPatronUser } from "@/app/actions/auth";
 
 export type Currency = "NGN" | "USD" | "EUR" | "GBP";
 
@@ -81,6 +82,11 @@ interface StoreContextType {
   activeStitch: StitchAnatomy | null;
   openStitchModal: (stitch: StitchAnatomy) => void;
   closeStitchModal: () => void;
+  // Patron User session
+  patronUser: any;
+  setPatronUser: (user: any) => void;
+  refreshPatronSession: () => Promise<void>;
+  logoutPatron: () => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -101,8 +107,26 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [bespokeProduct, setBespokeProduct] = useState<string | null>(null);
   const [activeStitch, setActiveStitch] = useState<StitchAnatomy | null>(null);
 
-  // Hydrate from localStorage on client mount if available
+  // Patron user session state
+  const [patronUser, setPatronUser] = useState<any>(null);
+
+  const refreshPatronSession = async () => {
+    try {
+      const user = await getCurrentPatronUser();
+      setPatronUser(user);
+    } catch {
+      setPatronUser(null);
+    }
+  };
+
+  const logoutPatron = async () => {
+    await logoutPatronUser();
+    setPatronUser(null);
+  };
+
+  // Hydrate from localStorage on client mount if available & check patron session
   useEffect(() => {
+    refreshPatronSession();
     try {
       const savedCart = localStorage.getItem("ea_atelier_cart");
       if (savedCart) {
@@ -282,6 +306,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         activeStitch,
         openStitchModal,
         closeStitchModal,
+        patronUser,
+        setPatronUser,
+        refreshPatronSession,
+        logoutPatron,
       }}
     >
       {children}

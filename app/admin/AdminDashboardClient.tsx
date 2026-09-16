@@ -21,7 +21,7 @@ import {
   Plus,
 } from "lucide-react";
 
-export default function AdminDashboardClient() {
+export default function AdminDashboardClient({ stats }: { stats?: any }) {
   return (
     <div className="p-6 sm:p-8 space-y-8 max-w-[1550px] mx-auto font-sans">
       

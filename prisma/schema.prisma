@@ -45,6 +45,32 @@ enum CommissionStatus {
   COMPLETED
 }
 
+enum UserRole {
+  ADMIN
+  PATRON
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  name                 String?
+  avatarUrl            String?
+  role                 UserRole  @default(PATRON)
+  googleId             String?   @unique
+  memberNumber         String?   @unique
+  fiberSensitivities   String?   @default("GOTS Cotton, Belgian Flax Only")
+  silhouetteDimensions String?   @default("Relaxed Drape (Bust 88cm)")
+  dyePreferences       String?   @default("Natural Alum & Oak Gall Nut")
+  phone                String?
+  city                 String?
+  country              String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
 model Product {
   id                String          @id
   name              String

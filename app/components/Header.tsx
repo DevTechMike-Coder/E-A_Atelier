@@ -23,6 +23,7 @@ export default function Header() {
     setIsCartOpen,
     wishlistCount,
     setIsWishlistOpen,
+    patronUser,
   } = useStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -273,6 +274,29 @@ export default function Header() {
                 CART ({cartCount})
               </span>
             </button>
+
+            {/* Patron Sanctuary Drawer Trigger (Screenshot 4) */}
+            <button
+              onClick={() => setPatronSanctuaryOpen(true)}
+              className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-full border border-[#d8c8b4] hover:border-[#8a6f5a] bg-[#faf6f0] hover:bg-[#f4eee6] transition-all group shadow-2xs"
+              title={patronUser ? `Patron Sanctuary: ${patronUser.name || patronUser.email}` : "Open Patron Sanctuary (Archival Dossier)"}
+              aria-label="Open Patron Sanctuary"
+            >
+              <div className="w-6 h-6 rounded-full overflow-hidden relative border border-[#c4b5a2] flex-shrink-0 bg-[#efe7da]">
+                <Image
+                  src={
+                    patronUser?.avatarUrl ||
+                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=120&auto=format&fit=crop"
+                  }
+                  alt={patronUser?.name || "Patron Sanctuary"}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="hidden md:inline text-[10px] font-semibold tracking-archival uppercase text-[#5c4533] group-hover:text-[#1c1b1a]">
+                {patronUser ? (patronUser.name ? patronUser.name.split(" ")[0] : "PATRON") : "PATRON"}
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -322,6 +346,12 @@ export default function Header() {
           </div>
         </div>
       )}
+
+      {/* Patron Sanctuary Slide-Over Drawer (Screenshot 4) */}
+      <PatronSanctuaryDrawer
+        isOpen={patronSanctuaryOpen}
+        onClose={() => setPatronSanctuaryOpen(false)}
+      />
     </header>
   );
 }

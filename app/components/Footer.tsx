@@ -2,9 +2,17 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Check } from "lucide-react";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Strictly prevent Footer from rendering on any admin route
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 

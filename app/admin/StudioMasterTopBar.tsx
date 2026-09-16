@@ -5,9 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { logoutAdmin } from "@/app/actions/adminAuth";
-import { Bell, ChevronDown, Plus, LogOut, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, Plus, LogOut, Sparkles, UserCircle2 } from "lucide-react";
 
-export default function StudioMasterTopBar() {
+interface AdminTopBarUser {
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+}
+
+export default function StudioMasterTopBar({ user }: { user: AdminTopBarUser | null }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -66,22 +72,21 @@ export default function StudioMasterTopBar() {
           <span className="sm:hidden">NEW</span>
         </Link>
 
-        {/* Master Weaver Profile */}
+        {/* Authenticated Admin Profile - reflects whoever is actually logged in */}
         <div className="flex items-center gap-2.5 pl-2 border-l border-[#e6dbc9]">
-          <div className="w-8 h-8 rounded-full overflow-hidden relative border border-[#d8c8b4] bg-[#efe7da] flex-shrink-0">
-            <Image
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
-              alt="Elena Laurent"
-              fill
-              className="object-cover"
-            />
+          <div className="w-8 h-8 rounded-full overflow-hidden relative border border-[#d8c8b4] bg-[#efe7da] flex-shrink-0 flex items-center justify-center">
+            {user?.avatarUrl ? (
+              <Image src={user.avatarUrl} alt={user.name} fill className="object-cover" />
+            ) : (
+              <UserCircle2 size={20} className="text-[#8a6f5a]" />
+            )}
           </div>
           <div className="hidden lg:block text-left">
             <span className="text-xs font-semibold text-[#1c1b1a] block leading-tight">
-              Elena Laurent
+              {user?.name || "Unknown Custodian"}
             </span>
             <span className="text-[10px] text-[#8a6f5a] block">
-              Master Weaver & Founder
+              {user?.email || "Not signed in"}
             </span>
           </div>
         </div>
