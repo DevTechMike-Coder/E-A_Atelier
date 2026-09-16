@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import { isAdminAuthenticated } from "@/app/actions/adminAuth";
 import AdminLoginClient from "./AdminLoginClient";
 
 export const metadata: Metadata = {
@@ -6,6 +8,11 @@ export const metadata: Metadata = {
   description: "Secure gateway for atelier workshop custodians.",
 };
 
-export default function AdminLoginPage() {
+export default async function AdminLoginPage() {
+  const isAuthed = await isAdminAuthenticated();
+  if (isAuthed) {
+    redirect("/admin");
+  }
+
   return <AdminLoginClient />;
 }
