@@ -158,6 +158,8 @@ model Order {
   shippingRegion  String?
   shippingPostal  String?
   shippingCountry String
+  giftNote        String?     @db.Text
+  deliveryMethod  String      @default("courier")
 
   items     OrderItem[]
   createdAt DateTime    @default(now())
@@ -196,4 +198,26 @@ model BespokeCommission {
 
   @@index([email])
   @@index([status])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("footer") // "footer", "home", "wearables_waitlist"
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model ContactInquiry {
+  id             String   @id @default(cuid())
+  referenceCode  String   @unique @default(cuid())
+  name           String
+  email          String
+  classification String
+  details        String   @db.Text
+  status         String   @default("RECEIVED")
+  createdAt      DateTime @default(now())
+
+  @@index([email])
 }

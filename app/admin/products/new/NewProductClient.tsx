@@ -18,6 +18,8 @@ import {
   Layers,
 } from "lucide-react";
 
+import { getClosestColorName, PRESET_ATELIER_SWATCHES } from "@/lib/colorNames";
+
 export default function NewProductClient() {
   const router = useRouter();
 
@@ -61,17 +63,26 @@ export default function NewProductClient() {
   const [error, setError] = useState<string | null>(null);
 
   const handleAddColorway = () => {
-    setColorways((prev) => [...prev, { name: "", hex: "#8a6f5a", image: "" }]);
+    const defaultHex = "#8c9986";
+    setColorways((prev) => [
+      ...prev,
+      { name: getClosestColorName(defaultHex), hex: defaultHex, image: "" },
+    ]);
   };
 
   const handleRemoveColorway = (index: number) => {
     setColorways((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleColorwayChange = (index: number, field: string, val: string) => {
+  const handleColorwayChange = (index: number, field: "name" | "hex" | "image", val: string) => {
     setColorways((prev) => {
       const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: val };
+      if (field === "hex") {
+        const autoName = getClosestColorName(val);
+        updated[index] = { ...updated[index], hex: val, name: autoName };
+      } else {
+        updated[index] = { ...updated[index], [field]: val };
+      }
       return updated;
     });
   };
@@ -382,31 +393,69 @@ export default function NewProductClient() {
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {colorways.map((cw, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      placeholder="Color Name (e.g. Terracotta)"
-                      value={cw.name}
-                      onChange={(e) => handleColorwayChange(i, "name", e.target.value)}
-                      className="flex-1 bg-[#fdf8f5] border border-[rgba(138,111,90,0.25)] px-3 py-2 text-xs text-[#1c1b1a] rounded-sm"
-                    />
-                    <input
-                      type="color"
-                      value={cw.hex}
-                      onChange={(e) => handleColorwayChange(i, "hex", e.target.value)}
-                      className="w-10 h-8 border border-[rgba(138,111,90,0.25)] rounded cursor-pointer p-0 bg-transparent"
-                    />
-                    {colorways.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveColorway(i)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
+                  <div key={i} className="p-3 bg-[#faf6f0] border border-[#e8dbc9] rounded-sm space-y-2">
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        placeholder="Color Name (e.g. Madder Terracotta)"
+                        value={cw.name}
+                        onChange={(e) => handleColorwayChange(i, "name", e.target.value)}
+                        className="flex-1 bg-white border border-[rgba(138,111,90,0.25)] px-3 py-2 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                      />
+                      <div className="flex items-center gap-1.5 bg-white border border-[rgba(138,111,90,0.25)] px-2 py-1 rounded-sm">
+                        <input
+                          type="color"
+                          value={cw.hex}
+                          onChange={(e) => handleColorwayChange(i, "hex", e.target.value)}
+                          className="w-6 h-6 border-0 rounded cursor-pointer p-0 bg-transparent"
+                          title="Choose custom shade"
+                        />
+                        <span className="text-[11px] font-mono text-[#705743]">{cw.hex}</span>
+                      </div>
+                      {colorways.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveColorway(i)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          aria-label="Remove colorway"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Quick Atelier Palette Swatches */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      <span className="text-[9.5px] uppercase font-bold tracking-wider text-[#8a6f5a]">
+                        Natural Palette:
+                      </span>
+                      {PRESET_ATELIER_SWATCHES.map((sw) => (
+                        <button
+                          key={sw.name}
+                          type="button"
+                          onClick={() => {
+                            setColorways((prev) => {
+                              const updated = [...prev];
+                              updated[i] = { ...updated[i], hex: sw.hex, name: sw.name };
+                              return updated;
+                            });
+                          }}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] transition-all border ${
+                            cw.hex.toLowerCase() === sw.hex.toLowerCase()
+                              ? "bg-white border-[#8a6f5a] font-semibold text-[#1c1b1a] shadow-2xs"
+                              : "bg-white/60 border-[#e0d3c1] text-[#705743] hover:bg-white"
+                          }`}
+                        >
+                          <span
+                            className="w-2 h-2 rounded-full border border-black/15 flex-shrink-0"
+                            style={{ backgroundColor: sw.hex }}
+                          />
+                          <span>{sw.name}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>

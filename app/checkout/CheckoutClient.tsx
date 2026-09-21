@@ -84,6 +84,8 @@ export default function CheckoutClient() {
       shippingRegion: shippingRegion || undefined,
       shippingPostal: shippingPostal || undefined,
       shippingCountry,
+      giftNote: giftNote.trim() || undefined,
+      deliveryMethod,
       items: cart.map((item) => ({
         productId: item.productId,
         colorway: item.colorway,

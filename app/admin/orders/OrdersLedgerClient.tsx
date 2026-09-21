@@ -44,6 +44,8 @@ export interface OrderRow {
   shippingRegion?: string | null;
   shippingPostal?: string | null;
   shippingCountry: string;
+  giftNote?: string | null;
+  deliveryMethod?: string | null;
   createdAt: string;
   items: OrderItemRow[];
 }
@@ -267,7 +269,23 @@ export default function OrdersLedgerClient({ initialOrders }: { initialOrders: O
                 {selectedOrder.shippingPostal || ""}
               </p>
               <p className="font-medium text-[#705743]">{selectedOrder.shippingCountry}</p>
-              <p className="text-[11px] text-[#81756d] pt-1">{selectedOrder.customerEmail}</p>
+              <div className="pt-2 border-t border-[rgba(138,111,90,0.1)] space-y-1">
+                <p className="text-[11px] text-[#81756d]">
+                  Protocol:{" "}
+                  <span className="font-semibold text-[#1c1b1a] uppercase">
+                    {selectedOrder.deliveryMethod === "studio" ? "Studio Handover (Paris / Lagos)" : "Tracked Carbon Courier"}
+                  </span>
+                </p>
+                <p className="text-[11px] text-[#81756d]">{selectedOrder.customerEmail}</p>
+              </div>
+              {selectedOrder.giftNote && (
+                <div className="mt-2.5 p-2.5 bg-[#faf6f0] border border-[#e8dbc9] rounded text-xs space-y-1">
+                  <span className="text-[9.5px] font-bold tracking-archival uppercase text-[#8a6f5a] block">
+                    Custom Gift Note / Monogram:
+                  </span>
+                  <p className="italic text-[#4f453e] font-editorial">&ldquo;{selectedOrder.giftNote}&rdquo;</p>
+                </div>
+              )}
             </div>
 
             {/* Line items */}

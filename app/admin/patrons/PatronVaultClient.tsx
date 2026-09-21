@@ -19,10 +19,90 @@ import {
   RotateCcw,
   Sliders,
   ChevronRight,
+  Users,
 } from "lucide-react";
+import type { PatronRecord } from "@/app/actions/adminPatrons";
 
-export default function PatronVaultClient() {
+interface PatronVaultClientProps {
+  initialPatrons?: PatronRecord[];
+}
+
+export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultClientProps) {
+  const [patrons] = useState<PatronRecord[]>(initialPatrons);
+  const [selectedPatronId, setSelectedPatronId] = useState<string | null>(
+    initialPatrons.length > 0 ? initialPatrons[0].id : null
+  );
   const [activeTab, setActiveTab] = useState<"all" | "wearables" | "bags" | "living">("all");
+
+  const selectedPatron = patrons.find((p) => p.id === selectedPatronId) || patrons[0] || null;
+
+  const handleExportCSV = () => {
+    const listToExport = patrons.length > 0 ? patrons : [
+      {
+        id: "sample-01",
+        email: "camille.dorsay@archives-atelier.fr",
+        name: "Camille d'Orsay",
+        avatarUrl: null,
+        memberNumber: "042",
+        fiberSensitivities: "Aegean Organic Cotton, Belgian Flax, Mulberry Silk",
+        silhouetteDimensions: "Chest 88cm, Shoulder 38cm, Armspan 162cm",
+        dyePreferences: "Strict Botanical: Madder Root, Walnut Husk, Oak Gall",
+        phone: "+33 1 42 68 55 00",
+        city: "Paris",
+        country: "France",
+        createdAt: new Date("2022-09-15").toISOString(),
+        orders: [],
+        commissionsCount: 1,
+        totalSpentUSD: 4620,
+      } as PatronRecord,
+    ];
+
+    const headers = [
+      "Member Number",
+      "Name",
+      "Email",
+      "City",
+      "Country",
+      "Total Orders",
+      "Total Spent (USD)",
+      "Active Commissions",
+      "Joined Date",
+      "Fiber Sensitivities",
+      "Dye Preferences",
+    ];
+
+    const rows = listToExport.map((p) => [
+      p.memberNumber || "N/A",
+      `"${(p.name || "").replace(/"/g, '""')}"`,
+      `"${p.email}"`,
+      `"${(p.city || "").replace(/"/g, '""')}"`,
+      `"${(p.country || "").replace(/"/g, '""')}"`,
+      p.orders.length,
+      p.totalSpentUSD.toFixed(2),
+      p.commissionsCount,
+      new Date(p.createdAt).toLocaleDateString(),
+      `"${(p.fiberSensitivities || "").replace(/"/g, '""')}"`,
+      `"${(p.dyePreferences || "").replace(/"/g, '""')}"`,
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `patron_archival_ledger_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const patronDisplayName = selectedPatron?.name || (selectedPatron?.email ? selectedPatron.email.split("@")[0] : "Camille d'Orsay");
+  const patronMemberCode = selectedPatron?.memberNumber || "042";
+  const patronCity = selectedPatron?.city ? `${selectedPatron.city.toUpperCase()}, ${selectedPatron.country || ""}` : "PARIS, 7ÈME";
+  const patronJoinedText = selectedPatron
+    ? `Sustaining Patron since ${new Date(selectedPatron.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}. Active custodian registered in Sanctum archives.`
+    : "Sustaining Patron since Autumn 2022. Dedicated custodian of slow botanical dyes and zero-waste, single-needle crochet heirlooms.";
 
   return (
     <div className="p-6 sm:p-10 space-y-10 max-w-[1550px] mx-auto font-sans">
@@ -34,15 +114,38 @@ export default function PatronVaultClient() {
           <span>/</span>
           <span className="uppercase tracking-[0.16em] text-[10px] text-[#8a6f5a] font-bold">PATRON ARCHIVAL VAULT</span>
           <span>/</span>
-          <span className="font-semibold text-[#1c1b1a]">Camille d&apos;Orsay</span>
+          <span className="font-semibold text-[#1c1b1a]">{patronDisplayName}</span>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {patrons.length > 0 && (
+            <div className="flex items-center gap-1.5 bg-white border border-[#d8c8b4] px-2.5 py-1 rounded-sm text-xs text-[#3d2e24]">
+              <Users size={12} className="text-[#8a6f5a]" />
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8a6f5a]">Patron:</span>
+              <select
+                value={selectedPatronId || ""}
+                onChange={(e) => setSelectedPatronId(e.target.value)}
+                aria-label="Select archival patron"
+                className="bg-transparent border-none text-xs text-[#1c1b1a] font-medium focus:outline-none cursor-pointer"
+              >
+                {patrons.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name ? `${p.name} (${p.email})` : p.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <span className="text-[10px] font-bold tracking-archival uppercase text-[#8a6f5a] bg-[#efe7da] border border-[#d8c8b4] px-2.5 py-1 rounded-sm">
-            ARCHIVAL PATRON TIER • NO. 042
+            ARCHIVAL PATRON TIER • NO. {patronMemberCode}
           </span>
-          <button className="px-3 py-1 bg-white border border-[#d8c8b4] text-[#3d2e24] text-xs font-semibold tracking-archival uppercase rounded-sm hover:bg-[#faf6f0] transition-colors">
-            Export Ledger
+          <button
+            onClick={handleExportCSV}
+            className="px-3 py-1 bg-white border border-[#d8c8b4] text-[#3d2e24] text-xs font-semibold tracking-archival uppercase rounded-sm hover:bg-[#faf6f0] transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Download size={12} className="text-[#8a6f5a]" />
+            <span>Export Ledger</span>
           </button>
         </div>
       </div>
@@ -53,8 +156,11 @@ export default function PatronVaultClient() {
           <div className="flex items-start gap-5">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden relative border-2 border-[#d8c8b4] flex-shrink-0 bg-[#efe7da]">
               <Image
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
-                alt="Camille d'Orsay"
+                src={
+                  selectedPatron?.avatarUrl ||
+                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
+                }
+                alt={patronDisplayName}
                 fill
                 className="object-cover"
               />
@@ -63,14 +169,14 @@ export default function PatronVaultClient() {
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="font-editorial text-2xl sm:text-3xl text-[#1c1b1a]">
-                  Camille d&apos;Orsay
+                  {patronDisplayName}
                 </h1>
                 <span className="text-[10px] font-mono font-semibold tracking-wider text-[#705743] bg-[#efe7da] px-2 py-0.5 rounded">
-                  PARIS, 7ÈME
+                  {patronCity}
                 </span>
               </div>
               <p className="text-xs text-[#594d42] max-w-2xl leading-relaxed">
-                Sustaining Patron since Autumn 2022. Dedicated custodian of slow botanical dyes and zero-waste, single-needle crochet heirlooms.
+                {patronJoinedText}
               </p>
               <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#705743] pt-1">
                 <span className="flex items-center gap-1 font-medium">
@@ -102,24 +208,42 @@ export default function PatronVaultClient() {
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a] block">
               HEIRLOOMS OWNED
             </span>
-            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">4 pieces</span>
-            <span className="text-[10.5px] text-[#81756d]">78 loom hours funded</span>
+            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">
+              {selectedPatron ? `${selectedPatron.orders.length} pieces` : "4 pieces"}
+            </span>
+            <span className="text-[10.5px] text-[#81756d]">
+              {selectedPatron
+                ? `${selectedPatron.orders.reduce((sum, o) => sum + o.itemsCount, 0)} total items acquired`
+                : "78 loom hours funded"}
+            </span>
           </div>
 
           <div>
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a] block">
               ACTIVE COMMISSION
             </span>
-            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">1 in loom</span>
-            <span className="text-[10.5px] text-emerald-800">Est. dispatch May 18</span>
+            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">
+              {selectedPatron ? `${selectedPatron.commissionsCount} in loom` : "1 in loom"}
+            </span>
+            <span className="text-[10.5px] text-emerald-800">
+              {selectedPatron && selectedPatron.commissionsCount === 0
+                ? "No pending commissions"
+                : "Est. dispatch May 18"}
+            </span>
           </div>
 
           <div>
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a] block">
-              EXPLICIT ARCHIVES
+              TOTAL VAULT CUSTODY
             </span>
-            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">2 watchlists</span>
-            <span className="text-[10.5px] text-[#81756d]">Madder & Oak Gall</span>
+            <span className="font-editorial text-2xl text-[#1c1b1a] block mt-0.5">
+              {selectedPatron
+                ? `$${selectedPatron.totalSpentUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : "2 watchlists"}
+            </span>
+            <span className="text-[10.5px] text-[#81756d]">
+              {selectedPatron ? "Cumulative atelier investment" : "Madder & Oak Gall"}
+            </span>
           </div>
 
           <div>
@@ -492,7 +616,10 @@ export default function PatronVaultClient() {
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs">
-                {["Aegean Organic Cotton", "Belgian Wet-Spun Flax", "Unbleached Mulberry Silk Filament", "Fine Cruelty-Free Alpaca Cloud"].map((f) => (
+                {(selectedPatron?.fiberSensitivities
+                  ? selectedPatron.fiberSensitivities.split(",").map((s) => s.trim())
+                  : ["Aegean Organic Cotton", "Belgian Wet-Spun Flax", "Unbleached Mulberry Silk Filament", "Fine Cruelty-Free Alpaca Cloud"]
+                ).map((f) => (
                   <span key={f} className="px-3 py-1 bg-[#faf6f0] border border-[#d8c8b4] rounded-sm text-[#3d2e24] font-medium flex items-center gap-1.5">
                     <Check size={12} className="text-emerald-700" />
                     <span>{f}</span>
@@ -507,10 +634,11 @@ export default function PatronVaultClient() {
                 <span className="text-[10.5px] font-bold tracking-archival uppercase text-[#8a6f5a]">
                   BOTANICAL DYE PROFILE & SENSITIVITIES
                 </span>
-                <span className="text-[10px] text-[#705743]">Synthetic Mordant Intolerant</span>
+                <span className="text-[10px] text-[#705743]">Natural Formulas Only</span>
               </div>
               <div className="p-3.5 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-xs text-[#594d42] leading-relaxed">
-                Strict Botanical Formula. Exclusively ferment-stabilised madder (Rubia), green walnut husk, oak gall tannin, pomegranate rind, and red onion. Free of heavy metals, copper sulphate, and chemical fixatives.
+                {selectedPatron?.dyePreferences ||
+                  "Strict Botanical Formula. Exclusively ferment-stabilised madder (Rubia), green walnut husk, oak gall tannin, pomegranate rind, and red onion. Free of heavy metals, copper sulphate, and chemical fixatives."}
               </div>
             </div>
 
@@ -520,27 +648,35 @@ export default function PatronVaultClient() {
                 <span className="text-[10.5px] font-bold tracking-archival uppercase text-[#8a6f5a]">
                   TAILORED MEMORY & DRAPE PROFILE
                 </span>
-                <span className="text-[10px] text-[#81756d]">Calibrated: Feb 2024</span>
+                <span className="text-[10px] text-[#81756d]">
+                  {selectedPatron?.silhouetteDimensions ? "Dossier Customised" : "Calibrated: Feb 2024"}
+                </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
-                  <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">CHEST WIDTH</span>
-                  <span className="font-editorial text-xl text-[#1c1b1a] block">88 cm</span>
+              {selectedPatron?.silhouetteDimensions ? (
+                <div className="p-3.5 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-xs text-[#3d2e24] font-mono">
+                  {selectedPatron.silhouetteDimensions}
                 </div>
-                <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
-                  <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">SHOULDER DROP</span>
-                  <span className="font-editorial text-xl text-[#1c1b1a] block">38 cm</span>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
+                    <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">CHEST WIDTH</span>
+                    <span className="font-editorial text-xl text-[#1c1b1a] block">88 cm</span>
+                  </div>
+                  <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
+                    <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">SHOULDER DROP</span>
+                    <span className="font-editorial text-xl text-[#1c1b1a] block">38 cm</span>
+                  </div>
+                  <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
+                    <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">ARMSPAN REACH</span>
+                    <span className="font-editorial text-xl text-[#1c1b1a] block">162 cm</span>
+                  </div>
+                  <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
+                    <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">DRAPE INTENT</span>
+                    <span className="font-editorial text-xl text-[#705743] block">Relaxed</span>
+                  </div>
                 </div>
-                <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
-                  <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">ARMSPAN REACH</span>
-                  <span className="font-editorial text-xl text-[#1c1b1a] block">162 cm</span>
-                </div>
-                <div className="p-3 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm text-center space-y-0.5">
-                  <span className="text-[9.5px] text-[#81756d] uppercase tracking-wider block">DRAPE INTENT</span>
-                  <span className="font-editorial text-xl text-[#705743] block">Relaxed</span>
-                </div>
-              </div>
+              )}
             </div>
 
             <div className="pt-2 flex items-center justify-between text-xs">
@@ -563,11 +699,22 @@ export default function PatronVaultClient() {
                 <span className="text-[10px] font-bold text-[#8a6f5a] uppercase">PRIMARY ADDRESS</span>
                 <span className="text-[9px] text-emerald-800 font-bold bg-emerald-100 px-1.5 rounded">VERIFIED</span>
               </div>
-              <p className="font-semibold text-sm text-[#1c1b1a]">Camille d&apos;Orsay</p>
-              <p>14 Rue de Varenne</p>
-              <p>Bâtiment D • 3e Étage</p>
-              <p className="font-medium text-[#1c1b1a]">75007 Paris, France</p>
-              <p className="text-[10.5px] text-[#81756d] pt-1">Concierge Service Code: L08914</p>
+              <p className="font-semibold text-sm text-[#1c1b1a]">{patronDisplayName}</p>
+              {selectedPatron?.city ? (
+                <>
+                  <p>{selectedPatron.city}</p>
+                  <p className="font-medium text-[#1c1b1a]">{selectedPatron.country || "France"}</p>
+                </>
+              ) : (
+                <>
+                  <p>14 Rue de Varenne</p>
+                  <p>Bâtiment D • 3e Étage</p>
+                  <p className="font-medium text-[#1c1b1a]">75007 Paris, France</p>
+                </>
+              )}
+              <p className="text-[10.5px] text-[#81756d] pt-1">
+                {selectedPatron?.phone ? `Direct Line: ${selectedPatron.phone}` : "Concierge Service Code: L08914"}
+              </p>
             </div>
 
             <div className="space-y-2 text-xs text-[#594d42]">

@@ -3,13 +3,16 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, Clock, CheckCircle2, ArrowRight, ShieldCheck, Mail } from "lucide-react";
+import { Sparkles, Clock, CheckCircle2, ArrowRight, ShieldCheck, Mail, Loader2 } from "lucide-react";
 import { useStore } from "../context/StoreContext";
+import { subscribeToNewsletter } from "@/app/actions/newsletter";
 
 export default function WearablesComingSoonPage() {
   const { openBespokeModal } = useStore();
   const [email, setEmail] = useState("");
   const [waitlistRegistered, setWaitlistRegistered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const previewPieces = [
     {
@@ -78,26 +81,54 @@ export default function WearablesComingSoonPage() {
                 </div>
               ) : (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    if (email) setWaitlistRegistered(true);
+                    if (!email) return;
+                    setIsSubmitting(true);
+                    setError(null);
+                    try {
+                      const res = await subscribeToNewsletter(email, "wearables_waitlist");
+                      if (res.success) {
+                        setWaitlistRegistered(true);
+                      } else {
+                        setError(res.error || "Unable to join waitlist. Please try again.");
+                      }
+                    } catch {
+                      setError("Network error. Please try again.");
+                    } finally {
+                      setIsSubmitting(false);
+                    }
                   }}
-                  className="flex flex-col sm:flex-row gap-2 pt-1"
+                  className="space-y-2 pt-1"
                 >
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter your correspondence email..."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 bg-[#fdf8f5] border border-[rgba(138,111,90,0.25)] px-4 py-2.5 text-xs text-[#1c1b1a] focus:outline-none focus:border-[#8a6f5a] rounded-sm"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] transition-colors text-xs font-semibold tracking-archival uppercase px-6 py-2.5 rounded-sm"
-                  >
-                    JOIN WAITLIST
-                  </button>
+                  {error && (
+                    <p className="text-[11px] text-rose-700">{error}</p>
+                  )}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="email"
+                      required
+                      disabled={isSubmitting}
+                      placeholder="Enter your correspondence email..."
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="flex-1 bg-[#fdf8f5] border border-[rgba(138,111,90,0.25)] px-4 py-2.5 text-xs text-[#1c1b1a] focus:outline-none focus:border-[#8a6f5a] rounded-sm disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] disabled:opacity-60 transition-colors text-xs font-semibold tracking-archival uppercase px-6 py-2.5 rounded-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 size={13} className="animate-spin" />
+                          <span>JOINING...</span>
+                        </>
+                      ) : (
+                        <span>JOIN WAITLIST</span>
+                      )}
+                    </button>
+                  </div>
                 </form>
               )}
             </div>

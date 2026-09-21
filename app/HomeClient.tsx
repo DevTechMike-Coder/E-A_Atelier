@@ -6,13 +6,16 @@ import Link from "next/link";
 import { STITCHES, Product } from "./data/products";
 import ProductCard from "./components/ProductCard";
 import { useStore } from "./context/StoreContext";
-import { Sparkles, ArrowRight, Clock, ShieldCheck, Eye, Quote, Check } from "lucide-react";
+import { Sparkles, ArrowRight, Clock, ShieldCheck, Eye, Quote, Check, Loader2 } from "lucide-react";
+import { subscribeToNewsletter } from "@/app/actions/newsletter";
 
 export default function HomeClient({ products }: { products: Product[] }) {
   const { openStitchModal, openBespokeModal } = useStore();
   const [activeTab, setActiveTab] = useState<string>("all");
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterDone, setNewsletterDone] = useState(false);
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterError, setNewsletterError] = useState<string | null>(null);
 
   // Filter curated products for collection tab
   const getFilteredProducts = (): Product[] => {
@@ -474,26 +477,54 @@ export default function HomeClient({ products }: { products: Product[] }) {
             </div>
           ) : (
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                if (newsletterEmail) setNewsletterDone(true);
+                if (!newsletterEmail) return;
+                setNewsletterSubmitting(true);
+                setNewsletterError(null);
+                try {
+                  const res = await subscribeToNewsletter(newsletterEmail, "home");
+                  if (res.success) {
+                    setNewsletterDone(true);
+                  } else {
+                    setNewsletterError(res.error || "Subscription unsuccessful. Please try again.");
+                  }
+                } catch {
+                  setNewsletterError("Network error. Please try again.");
+                } finally {
+                  setNewsletterSubmitting(false);
+                }
               }}
-              className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
+              className="space-y-2 max-w-md mx-auto pt-2"
             >
-              <input
-                type="email"
-                required
-                placeholder="Enter your email address..."
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                className="flex-1 bg-white border border-[rgba(138,111,90,0.25)] px-4 py-3 text-xs text-[#1c1b1a] focus:outline-none focus:border-[#8a6f5a] rounded-sm"
-              />
-              <button
-                type="submit"
-                className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] transition-colors text-xs font-semibold tracking-archival uppercase px-7 py-3 rounded-sm shadow-sm"
-              >
-                SUBSCRIBE
-              </button>
+              {newsletterError && (
+                <p className="text-[11px] text-rose-700 text-center">{newsletterError}</p>
+              )}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="email"
+                  required
+                  disabled={newsletterSubmitting}
+                  placeholder="Enter your email address..."
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="flex-1 bg-white border border-[rgba(138,111,90,0.25)] px-4 py-3 text-xs text-[#1c1b1a] focus:outline-none focus:border-[#8a6f5a] rounded-sm disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={newsletterSubmitting}
+                  className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] disabled:opacity-60 transition-colors text-xs font-semibold tracking-archival uppercase px-7 py-3 rounded-sm shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  {newsletterSubmitting ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin" />
+                      <span>SUBSCRIBING...</span>
+                    </>
+                  ) : (
+                    <span>SUBSCRIBE</span>
+                  )}
+                </button>
+              </div>
             </form>
           )}
         </div>

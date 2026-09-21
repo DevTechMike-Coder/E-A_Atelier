@@ -22,6 +22,8 @@ export interface CreateOrderInput {
   shippingRegion?: string;
   shippingPostal?: string;
   shippingCountry: string;
+  giftNote?: string;
+  deliveryMethod?: "courier" | "studio";
   items: OrderItemInput[];
 }
 
@@ -67,6 +69,8 @@ export async function createOrder(data: CreateOrderInput) {
         shippingRegion: data.shippingRegion?.trim() || null,
         shippingPostal: data.shippingPostal?.trim() || null,
         shippingCountry: data.shippingCountry.trim(),
+        giftNote: data.giftNote?.trim() || null,
+        deliveryMethod: data.deliveryMethod || "courier",
         status: "PENDING",
         items: {
           create: data.items.map((item) => ({
@@ -129,6 +133,8 @@ export async function getOrderById(orderId: string) {
       shippingRegion: order.shippingRegion,
       shippingPostal: order.shippingPostal,
       shippingCountry: order.shippingCountry,
+      giftNote: order.giftNote,
+      deliveryMethod: order.deliveryMethod,
       createdAt: order.createdAt.toISOString(),
       items: order.items.map((item) => ({
         id: item.id,

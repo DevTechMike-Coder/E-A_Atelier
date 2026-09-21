@@ -7,18 +7,20 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Resolve the actual authenticated admin from the signed session (re-checked
-  // against the database) instead of hardcoding a name/avatar in the top bar.
-  // This is null pre-login (e.g. on /admin/login), which StudioMasterTopBar
-  // handles by not rendering the profile pill at all.
   const adminUser = await getCurrentAdminUser();
-  const topBarUser = adminUser
-    ? {
-        name: adminUser.name || adminUser.email,
-        email: adminUser.email,
-        avatarUrl: adminUser.avatarUrl,
-      }
-    : null;
+
+  // If not authenticated as admin (e.g. on /admin/login or before redirect),
+  // do NOT mount AdminChrome / StudioMasterSidebar / TopBar to prevent any
+  // momentary flash of the restricted admin portal shell.
+  if (!adminUser) {
+    return <div className="min-h-screen bg-[#faf6f0]">{children}</div>;
+  }
+
+  const topBarUser = {
+    name: adminUser.name || adminUser.email,
+    email: adminUser.email,
+    avatarUrl: adminUser.avatarUrl,
+  };
 
   return <AdminChrome user={topBarUser}>{children}</AdminChrome>;
 }

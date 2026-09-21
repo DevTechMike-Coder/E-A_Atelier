@@ -19,18 +19,42 @@ import {
   Heart,
   Calendar,
   Scissors,
+  Loader2,
 } from "lucide-react";
+import { submitContactInquiry } from "@/app/actions/contact";
 
 export default function ContactConciergeClient() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [classification, setClassification] = useState("Bespoke Commission (Custom Colorway / Sizing / Bridal)");
   const [details, setDetails] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [referenceCode, setReferenceCode] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await submitContactInquiry({
+        name,
+        email,
+        classification,
+        details,
+      });
+
+      if (res.success && res.referenceCode) {
+        setReferenceCode(res.referenceCode);
+      } else {
+        setErrorMessage(res.error || "Unable to transmit inquiry. Please try again.");
+      }
+    } catch {
+      setErrorMessage("An unexpected transmission fault occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -185,20 +209,42 @@ export default function ContactConciergeClient() {
                 </p>
               </div>
 
-              {submitted ? (
-                <div className="p-8 bg-[#f7f2eb] border border-[#e8dbc9] text-center space-y-3 rounded-sm">
+              {referenceCode ? (
+                <div className="p-8 bg-[#f7f2eb] border border-[#e8dbc9] text-center space-y-3 rounded-sm animate-in fade-in duration-300">
                   <div className="w-12 h-12 rounded-full bg-[#efe7da] text-[#705743] flex items-center justify-center mx-auto">
                     <CheckCircle2 size={24} />
                   </div>
                   <h3 className="font-editorial text-2xl text-[#1c1b1a]">
                     Transmission Inscribed
                   </h3>
-                  <p className="text-xs text-[#594d42] max-w-sm mx-auto">
-                    Merci. Our atelier direct liaison has received your brief and will respond within 12 business hours.
+                  <div className="inline-block bg-white border border-[#d8c8b4] px-3 py-1 rounded-sm text-xs font-mono text-[#5c4533] font-bold tracking-wider">
+                    REF: {referenceCode}
+                  </div>
+                  <p className="text-xs text-[#594d42] max-w-sm mx-auto leading-relaxed">
+                    Merci, {name || "Patron"}. Our atelier direct liaison has received your brief and inscribed it into our register. We will respond within 12 business hours.
                   </p>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => {
+                        setReferenceCode(null);
+                        setName("");
+                        setEmail("");
+                        setDetails("");
+                      }}
+                      className="text-[11px] font-semibold tracking-archival uppercase text-[#8a6f5a] hover:underline"
+                    >
+                      Transmit another brief
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+                  {errorMessage && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-sm">
+                      {errorMessage}
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-semibold tracking-archival uppercase text-[#4f453e]">
@@ -207,10 +253,11 @@ export default function ContactConciergeClient() {
                       <input
                         type="text"
                         required
+                        disabled={isSubmitting}
                         placeholder="e.g. Camille Laurent"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                        className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a] disabled:opacity-50"
                       />
                     </div>
 
@@ -221,10 +268,11 @@ export default function ContactConciergeClient() {
                       <input
                         type="email"
                         required
+                        disabled={isSubmitting}
                         placeholder="camille@domain.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                        className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a] disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -235,8 +283,9 @@ export default function ContactConciergeClient() {
                     </label>
                     <select
                       value={classification}
+                      disabled={isSubmitting}
                       onChange={(e) => setClassification(e.target.value)}
-                      className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                      className="w-full bg-[#fdf8f5] border border-[#d8c8b4] px-3.5 py-2.5 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a] disabled:opacity-50"
                     >
                       <option value="Bespoke Commission (Custom Colorway / Sizing / Bridal)">
                         Bespoke Commission (Custom Colorway / Sizing / Bridal)
@@ -260,10 +309,11 @@ export default function ContactConciergeClient() {
                     </div>
                     <textarea
                       rows={4}
+                      disabled={isSubmitting}
                       placeholder="Describe your desired palette, garment silhouette, wedding date, or custom dimensions..."
                       value={details}
                       onChange={(e) => setDetails(e.target.value)}
-                      className="w-full bg-[#fdf8f5] border border-[#d8c8b4] p-3 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a]"
+                      className="w-full bg-[#fdf8f5] border border-[#d8c8b4] p-3 text-xs text-[#1c1b1a] rounded-sm focus:outline-none focus:border-[#8a6f5a] disabled:opacity-50"
                     />
                   </div>
 
@@ -273,9 +323,17 @@ export default function ContactConciergeClient() {
                     </span>
                     <button
                       type="submit"
-                      className="w-full sm:w-auto px-8 py-3 bg-[#1c1b1a] hover:bg-[#8a6f5a] text-[#f8f4ed] text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-sm"
+                      disabled={isSubmitting}
+                      className="w-full sm:w-auto px-8 py-3 bg-[#1c1b1a] hover:bg-[#8a6f5a] disabled:opacity-60 text-[#f8f4ed] text-xs font-semibold tracking-archival uppercase rounded-sm transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      TRANSMIT INQUIRY &rarr;
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          <span>TRANSMITTING...</span>
+                        </>
+                      ) : (
+                        <span>TRANSMIT INQUIRY &rarr;</span>
+                      )}
                     </button>
                   </div>
                 </form>

@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
+import { subscribeToNewsletter } from "@/app/actions/newsletter";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -15,11 +16,25 @@ export default function Footer() {
 
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setSubscribed(true);
+    if (!email) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await subscribeToNewsletter(email, "footer");
+      if (res.success) {
+        setSubscribed(true);
+      } else {
+        setError(res.error || "Subscription unsuccessful. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -64,21 +79,35 @@ export default function Footer() {
                 <span>Merci. You are registered for our private seasonal dispatch.</span>
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 pt-1">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your correspondence email..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 bg-white border border-[rgba(138,111,90,0.25)] px-4 py-2.5 text-xs text-[#1c1b1a] placeholder-[#81756d] focus:outline-none focus:border-[#8a6f5a] rounded-sm"
-                />
-                <button
-                  type="submit"
-                  className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] transition-colors text-[11px] font-semibold tracking-archival uppercase px-6 py-2.5 rounded-sm"
-                >
-                  SUBSCRIBE
-                </button>
+              <form onSubmit={handleSubscribe} className="space-y-2 pt-1">
+                {error && (
+                  <p className="text-[11px] text-rose-700">{error}</p>
+                )}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="email"
+                    required
+                    disabled={isSubmitting}
+                    placeholder="Enter your correspondence email..."
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 bg-white border border-[rgba(138,111,90,0.25)] px-4 py-2.5 text-xs text-[#1c1b1a] placeholder-[#81756d] focus:outline-none focus:border-[#8a6f5a] rounded-sm disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-[#242321] text-[#f8f4ed] hover:bg-[#8a6f5a] disabled:opacity-60 transition-colors text-[11px] font-semibold tracking-archival uppercase px-6 py-2.5 rounded-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={13} className="animate-spin" />
+                        <span>SUBSCRIBING...</span>
+                      </>
+                    ) : (
+                      <span>SUBSCRIBE</span>
+                    )}
+                  </button>
+                </div>
               </form>
             )}
           </div>

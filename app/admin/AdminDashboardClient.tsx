@@ -56,39 +56,41 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
         <div className="bg-white p-5 rounded-sm border border-[#e6dbc9] shadow-xs space-y-2 relative">
           <div className="flex items-center justify-between text-[#81756d]">
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a]">
-              CURATED REVENUE (SPRING MTD)
+              CURATED REVENUE
             </span>
             <Building size={14} className="text-[#8a6f5a]" />
           </div>
           <div className="flex items-baseline gap-2.5">
-            <span className="font-editorial text-3xl text-[#1c1b1a]">€42,850</span>
+            <span className="font-editorial text-3xl text-[#1c1b1a]">
+              ${Number(stats?.totalRevenueUSD || 0).toLocaleString()} <span className="text-sm font-sans text-[#81756d]">USD</span>
+            </span>
             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
-              +18.4%
+              Settled
             </span>
           </div>
           <p className="text-[11px] text-[#705743] pt-1">
-            Avg. Order Value: €385 • Carbon-Neutral Offset
+            Paid atelier acquisitions • Carbon-Neutral Dispatch
           </p>
         </div>
 
-        {/* Metric 2: Loom Capacity */}
+        {/* Metric 2: Orders */}
         <div className="bg-white p-5 rounded-sm border border-[#e6dbc9] shadow-xs space-y-2 relative">
           <div className="flex items-center justify-between text-[#81756d]">
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a]">
-              LOOM CAPACITY & CRAFT
+              BATCH ORDERS LEDGER
             </span>
             <Scissors size={14} className="text-[#8a6f5a]" />
           </div>
           <div className="flex items-baseline gap-2.5">
             <span className="font-editorial text-3xl text-[#1c1b1a]">
-              342 <span className="text-xl text-[#81756d]">/ 400 hrs</span>
+              {stats?.paidOrders || 0} <span className="text-xl text-[#81756d]">/ {stats?.totalOrders || 0}</span>
             </span>
             <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">
-              85.5% Booked
+              {stats?.totalOrders ? Math.round(((stats?.paidOrders || 0) / stats.totalOrders) * 100) : 0}% Paid
             </span>
           </div>
           <p className="text-[11px] text-[#705743] pt-1">
-            Across 4 resident master artisans
+            Active atelier batch orders in fulfillment
           </p>
         </div>
 
@@ -96,37 +98,41 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
         <div className="bg-white p-5 rounded-sm border border-[#e6dbc9] shadow-xs space-y-2 relative">
           <div className="flex items-center justify-between text-[#81756d]">
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a]">
-              BESPOKE COMMISSIONS
+              BESPOKE INQUIRIES
             </span>
             <Sparkles size={14} className="text-[#8a6f5a]" />
           </div>
           <div className="flex items-baseline gap-2.5">
-            <span className="font-editorial text-3xl text-[#1c1b1a]">6 Active</span>
+            <span className="font-editorial text-3xl text-[#1c1b1a]">
+              {stats?.pendingCommissions || 0} <span className="text-sm font-sans text-[#81756d]">Pending</span>
+            </span>
             <span className="text-[10px] font-medium text-[#705743] bg-[#efe7da] px-1.5 py-0.5 rounded">
-              4 In Queue
+              {stats?.totalCommissions || 0} Total
             </span>
           </div>
           <p className="text-[11px] text-[#705743] pt-1 truncate">
-            2 Bridal Veils • 3 Net Totes • 1 Tapestry
+            Bespoke palettes & bridal commissions
           </p>
         </div>
 
-        {/* Metric 4: Micro-Release */}
+        {/* Metric 4: Catalogue */}
         <div className="bg-white p-5 rounded-sm border border-[#e6dbc9] shadow-xs space-y-2 relative">
           <div className="flex items-center justify-between text-[#81756d]">
             <span className="text-[9.5px] font-bold tracking-[0.16em] uppercase text-[#8a6f5a]">
-              MICRO-RELEASE BATCH NO. 04
+              CATALOGUE ARCHIVE
             </span>
             <Clock size={14} className="text-[#8a6f5a]" />
           </div>
           <div className="flex items-baseline gap-2.5">
-            <span className="font-editorial text-3xl text-[#1c1b1a]">82% Sold</span>
+            <span className="font-editorial text-3xl text-[#1c1b1a]">
+              {stats?.productsCount || 0} <span className="text-sm font-sans text-[#81756d]">Pieces</span>
+            </span>
             <span className="text-[10px] font-bold text-[#705743] bg-[#f0e3d2] px-1.5 py-0.5 rounded">
-              Micro-Drop
+              Active
             </span>
           </div>
           <p className="text-[11px] text-[#705743] pt-1">
-            14/18 Luna Totes • 9/12 Sienna Vests claimed
+            Handcrafted pieces across bags, home & wearables
           </p>
         </div>
 
@@ -174,182 +180,75 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#8a6f5a]" />
                   <h2 className="font-editorial text-xl text-[#1c1b1a]">
-                    Active Loom Queue & Work Orders
+                    Recent Studio Orders & Active Queue
                   </h2>
                 </div>
                 <p className="text-xs text-[#81756d]">
-                  Real-time floor tracking across studio timber frames
+                  Real-time orders preserved in the atelier database
                 </p>
               </div>
               <Link
                 href="/admin/orders"
                 className="text-xs font-semibold text-[#8a6f5a] hover:text-[#5c4533] inline-flex items-center gap-1"
               >
-                <span>VIEW ALL 12 LOOMS</span>
+                <span>VIEW ALL ORDERS ({stats?.totalOrders || 0})</span>
                 <ArrowRight size={12} />
               </Link>
             </div>
 
             <div className="space-y-3.5">
-              
-              {/* Item 1 */}
-              <div className="p-4 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
-                    <Image
-                      src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=200&auto=format&fit=crop"
-                      alt="The Luna Net Tote"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-[#8a6f5a] bg-[#efe7da] px-1.5 py-0.2 rounded font-semibold">
-                        Loom 02
-                      </span>
-                      <h3 className="font-editorial text-base text-[#1c1b1a] font-medium">
-                        The Luna Net Tote
-                      </h3>
+              {stats?.recentOrders && stats.recentOrders.length > 0 ? (
+                stats.recentOrders.map((order: any) => (
+                  <div
+                    key={order.id}
+                    className="p-4 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-[#8a6f5a] transition-all"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-14 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4] flex items-center justify-center font-editorial text-sm text-[#705743] font-bold">
+                        #{order.id.slice(-4).toUpperCase()}
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono text-[#8a6f5a] bg-[#efe7da] px-1.5 py-0.2 rounded font-semibold">
+                            {order.currency}
+                          </span>
+                          <h3 className="font-editorial text-base text-[#1c1b1a] font-medium">
+                            {order.customerName}
+                          </h3>
+                        </div>
+                        <p className="text-[11px] text-[#705743]">
+                          {order.itemsCount} Allocated heirloom{order.itemsCount !== 1 ? "s" : ""} • ${(order.subtotalUSD).toLocaleString()} USD
+                        </p>
+                        <p className="text-[10.5px] text-[#81756d]">
+                          Preserved {new Date(order.createdAt).toLocaleDateString()} • {order.customerEmail}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-[#705743]">Batch 04 (#14)</p>
-                    <p className="text-[11px] text-[#81756d]">
-                      Master Artisan: <span className="text-[#3d2e24] font-medium">Elena Varga</span> • Desert Ecru Aegean Cotton
-                    </p>
-                    <p className="text-[10.5px] text-[#81756d]">
-                      Needlework: 14/16 hrs (Looping Handles)
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex flex-col items-end gap-1.5 self-end sm:self-center">
-                  <span className="text-[10px] font-semibold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
-                    Due Tomorrow
-                  </span>
-                  <button className="text-[11px] font-bold text-[#5c4533] hover:underline uppercase tracking-wider">
-                    LOG PASS
-                  </button>
-                </div>
-              </div>
-
-              {/* Item 2 */}
-              <div className="p-4 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
-                    <Image
-                      src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=200&auto=format&fit=crop"
-                      alt="Custom Bridal Scallop Veil"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-[#8a6f5a] bg-[#efe7da] px-1.5 py-0.2 rounded font-semibold">
-                        Bespoke #B-204
+                    <div className="flex flex-col items-end gap-1.5 self-end sm:self-center">
+                      <span
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                          order.status === "PAID" || order.status === "FULFILLED"
+                            ? "text-emerald-800 bg-emerald-100"
+                            : "text-amber-900 bg-amber-100"
+                        }`}
+                      >
+                        {order.status}
                       </span>
-                      <h3 className="font-editorial text-base text-[#1c1b1a] font-medium">
-                        Custom Bridal Scallop Veil & Wristlet
-                      </h3>
+                      <Link
+                        href={`/order/${order.id}`}
+                        className="text-[11px] font-bold text-[#5c4533] hover:underline uppercase tracking-wider"
+                      >
+                        INSPECT ORDER &rarr;
+                      </Link>
                     </div>
-                    <p className="text-[11px] text-[#705743]">
-                      Patron: Sophie de Montmirail • Artisan: Camille Laurent
-                    </p>
-                    <p className="text-[11px] text-[#81756d]">
-                      Madder Root Botanical Vat Soak (46h) • (26h elapsed)
-                    </p>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-10 text-xs text-[#81756d] bg-[#faf6f0] border border-dashed border-[#d8c8b4] rounded">
+                  No active orders recorded in the workshop ledger yet.
                 </div>
-
-                <div className="flex flex-col items-end gap-1.5 self-end sm:self-center">
-                  <span className="text-[10px] font-semibold text-[#705743] bg-[#efe7da] px-2 py-0.5 rounded">
-                    Due May 12
-                  </span>
-                  <button className="text-[11px] font-bold text-[#5c4533] hover:underline uppercase tracking-wider">
-                    VAT STATUS
-                  </button>
-                </div>
-              </div>
-
-              {/* Item 3 */}
-              <div className="p-4 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
-                    <Image
-                      src="https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?q=80&w=200&auto=format&fit=crop"
-                      alt="Aura Textured Vessel Sleeve"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-[#8a6f5a] bg-[#efe7da] px-1.5 py-0.2 rounded font-semibold">
-                        Loom 04
-                      </span>
-                      <h3 className="font-editorial text-base text-[#1c1b1a] font-medium">
-                        Aura Textured Vessel Sleeve
-                      </h3>
-                    </div>
-                    <p className="text-[11px] text-[#705743]">Living Collab #08</p>
-                    <p className="text-[11px] text-[#81756d]">
-                      Master Artisan: Inès Moreau • Belgian Raw Flax
-                    </p>
-                    <p className="text-[10.5px] text-[#81756d]">
-                      Blocking & Steam Finish (Wax seal inspection ready)
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end gap-1.5 self-end sm:self-center">
-                  <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                    Final QA
-                  </span>
-                  <button className="text-[11px] font-bold text-[#5c4533] hover:underline uppercase tracking-wider">
-                    INSPECT
-                  </button>
-                </div>
-              </div>
-
-              {/* Item 4 */}
-              <div className="p-4 bg-[#faf6f0] border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
-                    <Image
-                      src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=200&auto=format&fit=crop"
-                      alt="Sienna Scallop Vest"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-[#8a6f5a] bg-[#efe7da] px-1.5 py-0.2 rounded font-semibold">
-                        Custom #B-205
-                      </span>
-                      <h3 className="font-editorial text-base text-[#1c1b1a] font-medium">
-                        Sienna Scallop Vest • Custom Sizing
-                      </h3>
-                    </div>
-                    <p className="text-[11px] text-[#81756d]">
-                      Artisan: Maria Santos • Raffia & Spun Linen
-                    </p>
-                    <p className="text-[10.5px] text-[#81756d]">
-                      Pattern Draft & Tension Calibration
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end gap-1.5 self-end sm:self-center">
-                  <span className="text-[10px] font-semibold text-[#705743] bg-[#efe7da] px-2 py-0.5 rounded">
-                    Due May 18
-                  </span>
-                  <button className="text-[11px] font-bold text-[#5c4533] hover:underline uppercase tracking-wider">
-                    WARP LOOM
-                  </button>
-                </div>
-              </div>
-
+              )}
             </div>
 
             {/* Bottom Work Order Callout */}

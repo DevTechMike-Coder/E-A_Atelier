@@ -43,6 +43,8 @@ interface OrderData {
   shippingRegion?: string | null;
   shippingPostal?: string | null;
   shippingCountry: string;
+  giftNote?: string | null;
+  deliveryMethod?: string | null;
   createdAt: string;
   items: OrderItemData[];
 }
@@ -215,9 +217,25 @@ export default function OrderConfirmationClient({ order }: { order: OrderData })
                   {order.shippingPostal || ""}
                 </p>
                 <p className="font-medium text-[#1c1b1a]">{order.shippingCountry}</p>
-                <p className="pt-2 text-[11px] text-[#81756d] flex items-center gap-1">
-                  <Mail size={12} /> {order.customerEmail}
-                </p>
+                <div className="pt-2 border-t border-[rgba(138,111,90,0.1)] text-[11px] space-y-1">
+                  <p className="text-[#81756d]">
+                    Protocol:{" "}
+                    <span className="font-semibold text-[#1c1b1a] uppercase">
+                      {order.deliveryMethod === "studio" ? "Studio Handover (Paris / Lagos)" : "Tracked Carbon Courier"}
+                    </span>
+                  </p>
+                  <p className="text-[#81756d] flex items-center gap-1">
+                    <Mail size={12} /> {order.customerEmail}
+                  </p>
+                </div>
+                {order.giftNote && (
+                  <div className="mt-3 p-3 bg-white border border-[rgba(138,111,90,0.2)] rounded text-xs space-y-1">
+                    <span className="text-[9.5px] font-bold tracking-archival uppercase text-[#8a6f5a] block">
+                      Enclosed Monogram / Letterpress Note:
+                    </span>
+                    <p className="italic text-[#4f453e] font-editorial text-sm">&ldquo;{order.giftNote}&rdquo;</p>
+                  </div>
+                )}
               </div>
             </div>
 

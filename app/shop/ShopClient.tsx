@@ -21,6 +21,17 @@ function ShopContent({ products }: { products: Product[] }) {
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
 
+  // Available colorways extracted from catalogue
+  const availableColors = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      p.colorways?.forEach((c) => {
+        if (c.name) set.add(c.name);
+      });
+    });
+    return Array.from(set).sort();
+  }, [products]);
+
   // Filter logic
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -35,6 +46,13 @@ function ShopContent({ products }: { products: Product[] }) {
         const matchesFiber = p.fiber.toLowerCase().includes(queryLower);
         const matchesDesc = p.description.toLowerCase().includes(queryLower);
         if (!matchesName && !matchesFiber && !matchesDesc) return false;
+      }
+      // Colorway filter
+      if (selectedColor !== "all") {
+        const matchesColor = p.colorways?.some((c) =>
+          c.name.toLowerCase().includes(selectedColor.toLowerCase())
+        );
+        if (!matchesColor) return false;
       }
       // Fiber filter
       if (selectedFiber !== "all") {
@@ -54,7 +72,7 @@ function ShopContent({ products }: { products: Product[] }) {
       if (sortBy === "craftHours") return b.craftHours - a.craftHours;
       return 0; // default featured
     });
-  }, [products, activeCategory, initialQuery, selectedFiber, selectedPriceRange, sortBy]);
+  }, [products, activeCategory, initialQuery, selectedColor, selectedFiber, selectedPriceRange, sortBy]);
 
   const activeFiltersCount =
     (selectedColor !== "all" ? 1 : 0) +
@@ -157,6 +175,25 @@ function ShopContent({ products }: { products: Product[] }) {
         {/* Dropdown Filters Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 bg-[#f7f3ef] p-4 rounded-sm border border-[rgba(138,111,90,0.18)]">
           <div className="flex flex-wrap items-center gap-3">
+            {/* Color Dropdown */}
+            {availableColors.length > 0 && (
+              <div className="relative">
+                <select
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                  className="appearance-none bg-white border border-[rgba(138,111,90,0.25)] text-[#1c1b1a] text-xs px-3 py-2 pr-7 rounded-sm focus:outline-none focus:border-[#8a6f5a] font-medium"
+                >
+                  <option value="all">COLOR: ALL SHADES</option>
+                  {availableColors.map((col) => (
+                    <option key={col} value={col}>
+                      {col}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={12} className="absolute right-2.5 top-3 pointer-events-none text-[#81756d]" />
+              </div>
+            )}
+
             {/* Fiber Dropdown */}
             <div className="relative">
               <select
@@ -191,7 +228,7 @@ function ShopContent({ products }: { products: Product[] }) {
             {activeFiltersCount > 0 && (
               <button
                 onClick={clearAllFilters}
-                className="text-xs text-[#8a6f5a] hover:underline font-semibold tracking-archival uppercase px-2"
+                className="text-xs text-[#8a6f5a] hover:underline font-semibold tracking-archival uppercase px-2 cursor-pointer"
               >
                 CLEAR ALL ({activeFiltersCount})
               </button>
@@ -221,16 +258,22 @@ function ShopContent({ products }: { products: Product[] }) {
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
             <span className="text-[11px] text-[#81756d] uppercase tracking-archival">ACTIVE:</span>
+            {selectedColor !== "all" && (
+              <span className="inline-flex items-center gap-1 bg-white border border-[rgba(138,111,90,0.25)] px-2.5 py-1 rounded text-xs text-[#1c1b1a]">
+                Color: {selectedColor}
+                <button onClick={() => setSelectedColor("all")} className="cursor-pointer hover:text-[#8a6f5a]"><X size={12} /></button>
+              </span>
+            )}
             {selectedFiber !== "all" && (
               <span className="inline-flex items-center gap-1 bg-white border border-[rgba(138,111,90,0.25)] px-2.5 py-1 rounded text-xs text-[#1c1b1a]">
                 Fiber: {selectedFiber}
-                <button onClick={() => setSelectedFiber("all")}><X size={12} /></button>
+                <button onClick={() => setSelectedFiber("all")} className="cursor-pointer hover:text-[#8a6f5a]"><X size={12} /></button>
               </span>
             )}
             {selectedPriceRange !== "all" && (
               <span className="inline-flex items-center gap-1 bg-white border border-[rgba(138,111,90,0.25)] px-2.5 py-1 rounded text-xs text-[#1c1b1a]">
                 Price: {selectedPriceRange}
-                <button onClick={() => setSelectedPriceRange("all")}><X size={12} /></button>
+                <button onClick={() => setSelectedPriceRange("all")} className="cursor-pointer hover:text-[#8a6f5a]"><X size={12} /></button>
               </span>
             )}
             <span className="ml-auto text-[11px] text-[#81756d]">

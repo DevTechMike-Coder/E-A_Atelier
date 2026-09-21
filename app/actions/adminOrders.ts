@@ -96,6 +96,8 @@ export async function getAdminOrders(statusFilter?: string) {
     shippingRegion: o.shippingRegion,
     shippingPostal: o.shippingPostal,
     shippingCountry: o.shippingCountry,
+    giftNote: o.giftNote,
+    deliveryMethod: o.deliveryMethod,
     createdAt: o.createdAt.toISOString(),
     items: o.items.map((i) => ({
       id: i.id,
