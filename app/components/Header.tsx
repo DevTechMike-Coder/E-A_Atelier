@@ -67,7 +67,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-2 h-16 sm:h-20 min-w-0">
           {/* Mobile menu trigger */}
-          <div className="flex items-center lg:hidden">
+          <div className="flex items-center xl:hidden flex-shrink-0">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-[#242321] hover:text-[#8a6f5a] transition-colors"
@@ -78,7 +78,7 @@ export default function Header() {
           </div>
 
           {/* Left Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center space-x-7 text-[12px] font-semibold tracking-[0.08em] uppercase text-[#4f453e]">
+          <nav className="hidden xl:flex items-center gap-5 2xl:gap-7 text-[12px] font-semibold tracking-[0.06em] 2xl:tracking-[0.08em] uppercase text-[#4f453e] min-w-0">
             {navLinks.slice(0, 3).map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -89,7 +89,7 @@ export default function Header() {
                     isActive ? "text-[#8a6f5a] font-bold" : ""
                   }`}
                 >
-                  <span className="leading-tight">{link.label}</span>
+                  <span className="leading-tight whitespace-nowrap">{link.label}</span>
                   {link.label === "WEARABLES" ? (
                     <span className="text-[8.5px] px-1.5 py-0.5 rounded-full bg-[#f1e0cc] text-[#705743] font-medium tracking-normal lowercase whitespace-nowrap mt-0.5 leading-tight">
                       coming soon
@@ -111,8 +111,8 @@ export default function Header() {
           </nav>
 
           {/* Center Brand Mark */}
-          <div className="flex flex-col items-center justify-center text-center min-w-0">
-            <Link href="/" className="group inline-block min-w-0">
+          <div className="flex flex-col items-center justify-center text-center flex-shrink-0 px-2">
+            <Link href="/" className="group inline-block">
               <span className="font-editorial text-lg sm:text-2xl md:text-[28px] tracking-[0.03em] sm:tracking-[0.05em] text-[#1c1b1a] block font-normal whitespace-nowrap group-hover:text-[#705743] transition-colors">
                 E&A ATELIER
               </span>
@@ -123,8 +123,8 @@ export default function Header() {
           </div>
 
           {/* Right Desktop Nav Links & Utility Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-4 lg:gap-7 flex-shrink-0">
-            <nav className="hidden lg:flex items-center space-x-7 text-[12px] font-semibold tracking-[0.08em] uppercase text-[#4f453e]">
+          <div className="flex items-center gap-1.5 sm:gap-4 xl:gap-6 flex-shrink-0">
+            <nav className="hidden xl:flex items-center gap-5 2xl:gap-7 text-[12px] font-semibold tracking-[0.06em] 2xl:tracking-[0.08em] uppercase text-[#4f453e] min-w-0">
               {navLinks.slice(3).map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -135,7 +135,7 @@ export default function Header() {
                       isActive ? "text-[#8a6f5a] font-bold" : ""
                     }`}
                   >
-                    <span className="leading-tight">{link.label}</span>
+                    <span className="leading-tight whitespace-nowrap">{link.label}</span>
                     <span
                       className="text-[8.5px] px-1.5 py-0.5 opacity-0 select-none pointer-events-none mt-0.5 leading-tight"
                       aria-hidden="true"
@@ -303,7 +303,7 @@ export default function Header() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[rgba(138,111,90,0.18)] bg-[#fdf8f5] px-6 py-6 space-y-4 animate-fade-in font-sans">
+        <div className="xl:hidden border-t border-[rgba(138,111,90,0.18)] bg-[#fdf8f5] px-6 py-6 space-y-4 animate-fade-in font-sans">
           <div className="space-y-3 pb-4 border-b border-[rgba(138,111,90,0.15)]">
             {navLinks.map((link) => (
               <Link
