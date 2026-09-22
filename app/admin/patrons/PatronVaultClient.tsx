@@ -398,7 +398,7 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
           <p className="text-xs text-[#3d2e24] italic leading-relaxed">
             &ldquo;The chapel train on the central scallop holds potential past expected proportions—the silk row tension is gentle fly-drawn under natural morning light. Moving to the delicate outer wristlet edging tomorrow.&rdquo;
           </p>
-          <div className="flex items-center justify-between pt-1 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
             <button className="text-[11px] font-semibold text-[#5c4533] hover:underline uppercase tracking-wider">
               VIEW PHOTO LOG (3)
             </button>
@@ -679,9 +679,9 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
               )}
             </div>
 
-            <div className="pt-2 flex items-center justify-between text-xs">
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <span className="text-[#81756d]">Calibrated for custom tension gauges: 14 stitches = 10 cm</span>
-              <button className="px-3 py-1.5 bg-white border border-[#d8c8b4] text-[#3d2e24] text-[11px] font-semibold tracking-archival uppercase rounded-sm hover:bg-[#faf6f0]">
+              <button className="self-start sm:self-auto px-3 py-1.5 bg-white border border-[#d8c8b4] text-[#3d2e24] text-[11px] font-semibold tracking-archival uppercase rounded-sm hover:bg-[#faf6f0]">
                 UPDATE FIT DOSSIER
               </button>
             </div>
@@ -755,8 +755,8 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           
           {/* Alloc 1 */}
-          <div className="p-4 bg-white border border-[#e6dbc9] rounded-sm flex gap-4 shadow-xs">
-            <div className="w-24 h-28 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
+          <div className="p-4 bg-white border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row gap-4 shadow-xs">
+            <div className="w-full sm:w-24 h-40 sm:h-28 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
               <Image
                 src="https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?q=80&w=300&auto=format&fit=crop"
                 alt="Solstice Open-Knit Bucket Hat"
@@ -774,7 +774,7 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
                   Loom-knotted using raw Madagascar wild palm fronds.
                 </p>
               </div>
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
                 <span className="font-editorial text-lg text-[#1c1b1a]">€340 <span className="text-[10px] text-[#81756d] font-sans font-normal">EUR • 14 Loom Hrs</span></span>
                 <div className="flex gap-1.5">
                   <button className="px-2.5 py-1 bg-[#5c4533] text-white rounded-sm text-[10px] font-semibold uppercase">
@@ -786,8 +786,8 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
           </div>
 
           {/* Alloc 2 */}
-          <div className="p-4 bg-white border border-[#e6dbc9] rounded-sm flex gap-4 shadow-xs">
-            <div className="w-24 h-28 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
+          <div className="p-4 bg-white border border-[#e6dbc9] rounded-sm flex flex-col sm:flex-row gap-4 shadow-xs">
+            <div className="w-full sm:w-24 h-40 sm:h-28 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[#d8c8b4]">
               <Image
                 src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=300&auto=format&fit=crop"
                 alt="Ribbon-Weave Architectural Wool Throw"
@@ -805,7 +805,7 @@ export default function PatronVaultClient({ initialPatrons = [] }: PatronVaultCl
                   Spun from unbleached Portuguese highland fleece.
                 </p>
               </div>
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
                 <span className="font-editorial text-lg text-[#1c1b1a]">€780 <span className="text-[10px] text-[#81756d] font-sans font-normal">EUR • 44 Loom Hrs</span></span>
                 <div className="flex gap-1.5">
                   <button className="px-2.5 py-1 bg-[#5c4533] text-white rounded-sm text-[10px] font-semibold uppercase">
