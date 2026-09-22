@@ -121,18 +121,20 @@ export default function AdminProductsClient({
               <tbody className="divide-y divide-[rgba(138,111,90,0.12)]">
                 {filtered.map((p) => (
                   <tr key={p.id} className="hover:bg-[#fdf8f5] transition-colors">
-                    <td className="p-3.5 flex items-center gap-3">
-                      {p.image && (
-                        <div className="w-12 h-14 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[rgba(138,111,90,0.2)]">
-                          <Image src={p.image} alt={p.name} fill className="object-cover" />
+                    <td className="p-3.5">
+                      <div className="flex items-center gap-3">
+                        {p.image && (
+                          <div className="w-12 h-14 relative bg-[#efe7da] rounded overflow-hidden flex-shrink-0 border border-[rgba(138,111,90,0.2)]">
+                            <Image src={p.image} alt={p.name} fill className="object-cover" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-editorial text-sm font-semibold text-[#1c1b1a]">
+                            {p.name}
+                          </p>
+                          <p className="text-[10px] font-mono text-[#8a6f5a]">{p.refCode}</p>
+                          <p className="text-[10.5px] text-[#81756d] truncate max-w-xs">{p.fiber}</p>
                         </div>
-                      )}
-                      <div>
-                        <p className="font-editorial text-sm font-semibold text-[#1c1b1a]">
-                          {p.name}
-                        </p>
-                        <p className="text-[10px] font-mono text-[#8a6f5a]">{p.refCode}</p>
-                        <p className="text-[10.5px] text-[#81756d] truncate max-w-xs">{p.fiber}</p>
                       </div>
                     </td>
                     <td className="p-3.5">
