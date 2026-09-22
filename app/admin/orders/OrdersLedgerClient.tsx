@@ -321,11 +321,11 @@ export default function OrdersLedgerClient({ initialOrders }: { initialOrders: O
             </div>
 
             {/* Status Changer Footer */}
-            <div className="pt-4 border-t border-[rgba(138,111,90,0.18)] flex items-center justify-between">
+            <div className="pt-4 border-t border-[rgba(138,111,90,0.18)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs text-[#81756d]">
                 Current status: <strong className="text-[#1c1b1a]">{selectedOrder.status}</strong>
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleStatusChange(selectedOrder.id, "PAID")}
                   className="px-3 py-1.5 bg-emerald-700 text-white rounded-sm text-xs font-semibold uppercase"
