@@ -175,7 +175,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
           
           {/* Active Loom Queue */}
           <div className="bg-white border border-[#e6dbc9] rounded-sm shadow-xs p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#f0e6d6] pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f0e6d6] pb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#8a6f5a]" />
@@ -252,7 +252,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
             </div>
 
             {/* Bottom Work Order Callout */}
-            <div className="pt-3 border-t border-[#f0e6d6] flex items-center justify-between text-xs text-[#705743]">
+            <div className="pt-3 border-t border-[#f0e6d6] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-[#705743]">
               <div className="flex items-center gap-2 font-medium">
                 <Scissors size={14} className="text-[#8a6f5a]" />
                 <span>ASSIGN NEW WORK ORDER</span>
@@ -265,7 +265,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
 
           {/* Bespoke Concierge & Inbound Requests */}
           <div className="bg-white border border-[#e6dbc9] rounded-sm shadow-xs p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#f0e6d6] pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f0e6d6] pb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="font-editorial text-xl text-[#1c1b1a]">
@@ -553,7 +553,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
                   </div>
                   <span className="text-[10px] font-mono text-[#8a6f5a] font-semibold">#EA-8843</span>
                 </div>
-                <div className="flex items-center justify-between pt-1 text-[11px]">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
                   <span className="text-emerald-800 font-medium flex items-center gap-1">
                     ✓ Express DHL Green
                   </span>
@@ -572,7 +572,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
                   </div>
                   <span className="text-[10px] font-mono text-[#8a6f5a] font-semibold">#EA-8839</span>
                 </div>
-                <div className="flex items-center justify-between pt-1 text-[11px]">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
                   <span className="text-[#81756d]">FedEx Carbon-Neutral</span>
                   <button className="px-2.5 py-1 bg-white border border-[#d8c8b4] text-[#3d2e24] text-[10.5px] font-semibold rounded-sm uppercase tracking-wider hover:bg-[#efe7da]">
                     GENERATE AIRWAY BILL
@@ -589,7 +589,7 @@ export default function AdminDashboardClient({ stats }: { stats?: any }) {
                   </div>
                   <span className="text-[10px] font-mono text-[#8a6f5a] font-semibold">#EA-8835</span>
                 </div>
-                <div className="flex items-center justify-between pt-1 text-[11px]">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
                   <span className="text-[#81756d]">Wax Sealed • Packed</span>
                   <button className="px-2.5 py-1 bg-white border border-[#d8c8b4] text-[#3d2e24] text-[10.5px] font-semibold rounded-sm uppercase tracking-wider hover:bg-[#efe7da]">
                     MARK DISPATCHED
